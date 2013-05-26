@@ -4,23 +4,23 @@
 Generates o8c files from OCTGN card set metadata and card images.
 """
 
+from ast import literal_eval
 from os import listdir, mkdir, unlink, walk
 from os.path import join, splitext
-from tempfile import mkdtemp
+from urllib2 import urlopen
 from zipfile import ZipFile
 
 from git.repo import Repo
-from Levenshtein import ratio
 
 from card_set import octgnSetToDict
-from match import findBestMatch
+
+NETRUNNERCARDS_BASE = 'http://netrunnercards.info'
+NETRUNNERCARDS_URL = 'http://netrunnercards.info/api/search/d:r|c'
 
 class CardSetGenerator(object):
-    def __init__(self, cardset_prefix, image_path):
-        self._image_path = image_path
+    def __init__(self, cardset_prefix, netrunnercards_info):
+        self._cards_info = dict([(card['indexkey'], card) for card in netrunnercards_info])
         self._prefix = cardset_prefix
-        self._haystack = dict([(unicode(splitext(straw)[0]), straw) for straw in listdir(image_path)])
-        self._haystack_keys = self._haystack.keys()
 
     def generateSet(self, set_data, out_path):
         path = join(set_data['gameid'], 'Sets', set_data['id'], 'Cards')
@@ -32,24 +32,16 @@ class CardSetGenerator(object):
                 raise
         with ZipFile(o8c_path, 'w') as f:
             for card_id, card in set_data['cards'].items():
-                card_name = '-'.join(card['name'].lower().split(' '))
-                if len(card['subtitle']):
-                    card_name += '-' + '-'.join(card['subtitle'].lower().split(' '))
-                match = findBestMatch(card_name, self._haystack_keys)
-                r = ratio(card_name, match)
-                if r < 0.95:
-                    print card_name, match, r
-                assert(r > 0.8)
-                match = self._haystack[match]
-                ext = splitext(match)[-1]
-                f.write(join(self._image_path, match), join(path, card_id + ext))
+                match = self._cards_info[card_id[-5:]]
+                image_src = match['imagesrc'].replace('\\', '')
+                ext = splitext(image_src)[-1]
+                f.writestr(join(path, card_id + ext), urlopen(NETRUNNERCARDS_BASE + image_src).read())
 
 def main():
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('anr_repo', help='Path to the OCTN ANR plugin repository.')
-    parser.add_argument('card_images', help='Path to card images.  Images should be named after card names.')
     parser.add_argument('out', help='Path where to save card sets.')
     args = parser.parse_args()
 
@@ -64,7 +56,9 @@ def main():
     r = Repo(args.anr_repo)
     r.remotes.origin.pull()
 
-    gen = CardSetGenerator('ANR_', args.card_images)
+    cards_info = literal_eval(urlopen(NETRUNNERCARDS_URL).read())
+
+    gen = CardSetGenerator('ANR_', cards_info)
     for path in walk(card_sets):
         if len(path[-1]) > 0 and path[-1][0] == 'set.xml' and not path[0].endswith('Markers'):
             gen.generateSet(octgnSetToDict(join(card_sets, path[0], path[-1][0])), args.out)
