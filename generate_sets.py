@@ -4,7 +4,7 @@
 Generates o8c files from OCTGN card set metadata and card images.
 """
 
-from ast import literal_eval
+from json import loads as json_loads
 from os import listdir, mkdir, unlink, walk
 from os.path import join, splitext
 from urllib2 import urlopen
@@ -33,7 +33,7 @@ class CardSetGenerator(object):
         with ZipFile(o8c_path, 'w') as f:
             for card_id, card in set_data['cards'].items():
                 match = self._cards_info[card_id[-5:]]
-                image_src = match['imagesrc'].replace('\\', '')
+                image_src = match['imagesrc']
                 ext = splitext(image_src)[-1]
                 f.writestr(join(path, card_id + ext), urlopen(NETRUNNERCARDS_BASE + image_src).read())
 
@@ -56,7 +56,7 @@ def main():
     r = Repo(args.anr_repo)
     r.remotes.origin.pull()
 
-    cards_info = literal_eval(urlopen(NETRUNNERCARDS_URL).read())
+    cards_info = json_loads(urlopen(NETRUNNERCARDS_URL).read())
 
     gen = CardSetGenerator('ANR_', cards_info)
     for path in walk(card_sets):
