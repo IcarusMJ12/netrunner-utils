@@ -5,7 +5,7 @@ Generates o8c files from OCTGN card set metadata and card images.
 """
 
 from json import load as json_load
-from os import listdir, mkdir, unlink, walk
+from os import listdir, mkdir, unlink
 from os.path import join, splitext
 from zipfile import ZipFile
 
