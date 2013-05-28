@@ -4,48 +4,39 @@
 Generates o8c files from OCTGN card set metadata and card images.
 """
 
-from json import loads as json_loads
+from json import load as json_load
 from os import listdir, mkdir, unlink, walk
 from os.path import join, splitext
-from urllib2 import urlopen
 from zipfile import ZipFile
 
-from git.repo import Repo
-
-from card_set import octgnSetToDict
-
-NETRUNNERCARDS_BASE = 'http://netrunnercards.info'
-NETRUNNERCARDS_URL = 'http://netrunnercards.info/api/search/d:r|c'
-
 class CardSetGenerator(object):
-    def __init__(self, cardset_prefix, netrunnercards_info):
-        self._cards_info = dict([(card['indexkey'], card) for card in netrunnercards_info])
+    def __init__(self, image_path, cardset_prefix='ANR_'):
+        self._image_path = image_path
+        self._image_map = dict([(splitext(image)[0], image) for image in listdir(self._image_path)])
         self._prefix = cardset_prefix
 
     def generateSet(self, set_data, out_path):
-        path = join(set_data['gameid'], 'Sets', set_data['id'], 'Cards')
-        o8c_path = join(out_path, self._prefix + '_'.join(set_data['name'].split(' ')) + '.o8c')
+        path = join(set_data[0]['game_id'], 'Sets', set_data[0]['set_id'], 'Cards')
+        o8c_path = join(out_path, self._prefix + '_'.join(set_data[0]['set_name'].split(' ')) + '.o8c')
         try:
             unlink(o8c_path)
         except OSError as e:
             if e.errno != 2: #2 is no such file/directory
                 raise
         with ZipFile(o8c_path, 'w') as f:
-            for card_id, card in set_data['cards'].items():
-                match = self._cards_info[card_id[-5:]]
-                image_src = match['imagesrc']
+            for card in set_data:
+                card_id = card['card_id']
+                image_src = self._image_map[card_id]
                 ext = splitext(image_src)[-1]
-                f.writestr(join(path, card_id + ext), urlopen(NETRUNNERCARDS_BASE + image_src).read())
+                f.write(join(self._image_path, image_src), join(path, card['id'] + ext))
 
 def main():
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('anr_repo', help='Path to the OCTN ANR plugin repository.')
+    parser.add_argument('cards_path', help='Path to the card metadata generated with fetch_cards.py.')
     parser.add_argument('out', help='Path where to save card sets.')
     args = parser.parse_args()
-
-    card_sets = join(args.anr_repo, 'o8g', 'Sets')
 
     try:
         mkdir(args.out)
@@ -53,15 +44,15 @@ def main():
         if e.errno != 17: #17 is file exists
             raise
 
-    r = Repo(args.anr_repo)
-    r.remotes.origin.pull()
+    with open(join(args.cards_path, 'cards.json'), 'r') as f:
+        cards_info = json_load(f)
+    cards = cards_info['cards']
+    cards = [card for card in cards if 'set_id' in card]
+    sets = set([card['set_id'] for card in cards])
 
-    cards_info = json_loads(urlopen(NETRUNNERCARDS_URL).read())
-
-    gen = CardSetGenerator('ANR_', cards_info)
-    for path in walk(card_sets):
-        if len(path[-1]) > 0 and path[-1][0] == 'set.xml' and not path[0].endswith('Markers'):
-            gen.generateSet(octgnSetToDict(join(card_sets, path[0], path[-1][0])), args.out)
+    gen = CardSetGenerator(args.cards_path)
+    for s in sets:
+        gen.generateSet([card for card in cards if card['set_id'] == s], args.out)
 
 if __name__ == '__main__':
     main()
