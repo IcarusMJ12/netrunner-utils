@@ -9,6 +9,9 @@ from os import listdir, mkdir, unlink
 from os.path import join, splitext
 from zipfile import ZipFile
 
+def validString(string):
+    return string.isalnum() or string in ('_', '-', ' ')
+
 class CardSetGenerator(object):
     def __init__(self, image_path, cardset_prefix='ANR_'):
         self._image_path = image_path
@@ -17,7 +20,7 @@ class CardSetGenerator(object):
 
     def generateSet(self, set_data, out_path):
         path = join(set_data[0]['game_id'], 'Sets', set_data[0]['set_id'], 'Cards')
-        o8c_path = join(out_path, self._prefix + '_'.join(set_data[0]['set_name'].split(' ')) + '.o8c')
+        o8c_path = join(out_path, self._prefix + '_'.join(filter(validString, set_data[0]['set_name']).split(' ')) + '.o8c')
         try:
             unlink(o8c_path)
         except OSError as e:
