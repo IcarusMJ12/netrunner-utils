@@ -10,7 +10,7 @@ from json import dump as json_dump
 from os import mkdir, walk
 from os.path import exists, join, split
 from time import time
-from urllib2 import Request, urlopen
+from urllib2 import HTTPError, Request, urlopen
 from wsgiref.handlers import format_date_time
 
 from git.repo import Repo
@@ -58,17 +58,26 @@ def main():
             raise
     
     now = time()
-    r = Request(NETRUNNERCARDS_URL)
-    try:
-        with open(join(args.cards_path, 'cards.json'), 'r') as f:
-            r.add_header("If-Modified-Since", format_date_time(json_load(f)['modified_since']))
-    except IOError as e:
-        if e.errno == 2:
-            pass
-    cards = json_loads(urlopen(r).read())
 
     r = Repo(args.anr_repo)
     r.remotes.origin.pull()
+    octgn_sha = r.head.commit.hexsha
+
+    r = Request(NETRUNNERCARDS_URL)
+    try:
+        with open(join(args.cards_path, 'cards.json'), 'r') as f:
+            data = json_load(f)
+            if 'octgn_sha' in data and data['octgn_sha'] == octgn_sha:
+                r.add_header("If-Modified-Since", format_date_time(json_load(f)['modified_since']))
+    except IOError as e:
+        if e.errno != 2:
+            raise
+    try:
+        cards = json_loads(urlopen(r).read())
+    except HTTPError as e:
+        if e.code != 304:
+            raise
+
     card_sets_path = join(args.anr_repo, 'o8g', 'Sets')
     card_octgn_data = {}
     for path in walk(card_sets_path):
@@ -96,7 +105,7 @@ def main():
         if not exists(card_image_path):
             with open(card_image_path, 'w') as f:
                 f.write(urlopen(NETRUNNERCARDS_BASE + card['imagesrc']).read())
-    cards = {'modified_since': now, 'cards': cards}
+    cards = {'modified_since': now, 'octgn_sha': octgn_sha, 'cards': cards}
     with open(join(args.cards_path, 'cards.json'), 'w') as f:
         json_dump(cards, f)
 
