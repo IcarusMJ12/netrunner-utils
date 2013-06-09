@@ -100,7 +100,7 @@ class BaseCard
 		<div class='card' id="#{@card_id}">
 			<div class="card_header">
 				<div class="card_leftside">
-					<div class="card_name">#{(if @is_unique then '(u) ' else '') + @name.split(':')[0]}</div>
+					<div class="card_name">#{(if @is_unique then '(u) ' else '') + @name.split(':')[if @side is 'Corp' and @type is 'Identity' then 1 else 0]}</div>
 					<div class="card_subtype">#{if @subtype? then '('+@subtype+')' else ''}</div>
 				</div>
 				<div class="card_stats" onclick="expandCard('#{@card_id}')" oncontextmenu="collapseCard('#{@card_id}'); return false;">#{@getStats()}</div>
