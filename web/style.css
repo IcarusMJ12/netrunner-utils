@@ -1,0 +1,13 @@
+.card, .card_header, .card_center, .card_lower {float: left; width: 100%;}
+.card_header {font-weight: bold;}
+.card_leftside {float: left; width:70%;}
+.card_name {float: left;}
+.card_subtype {float: left; font-weight: normal; margin-left:2px;}
+.card_stats {float: right;}
+.card_center, .card_lower {display: none;}
+.card_lower {font-style: italic;}
+table {border-collapse: collapse;}
+th, td {border: 1px solid black; vertical-align: top;}
+.controls {width: 100%;}
+.control {float: left; border-style: solid; border-width: 2px; margin: 2px}
+#main {float: left;}
