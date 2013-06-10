@@ -1,3 +1,7 @@
+# cards indexed by card_id, i.e. serial number, which we will also use for card div ids
+@cards = {}
+@sides = {}
+
 card_types_order =
 	Corp: ["Identity", "Agenda", "Asset", "Upgrade", "ICE", "Operation"]
 	Runner: ["Identity", "Event", "Program", "Hardware", "Resource"]
@@ -6,7 +10,7 @@ factions_order =
 	Corp: ["Haas-Bioroid", "Jinteki", "NBN", "Weyland Consortium", "Neutral"]
 	Runner: ["Anarch", "Criminal", "Shaper", "Neutral"]
 
-@makeCard = (json) ->
+makeCard = (json) ->
 	result = switch json['type']
 		when 'Agenda' then new AgendaCard(json)
 		when 'Asset' then new AssetCard(json)
@@ -19,36 +23,12 @@ factions_order =
 		when 'Resource' then new ResourceCard(json)
 		when 'Upgrade' then new UpgradeCard(json)
 
-@expandCard = (card_id) ->
-	card = document.getElementById(card_id)
-	card_center = card.getElementsByClassName("card_center")[0]
-	card_lower = card.getElementsByClassName("card_lower")[0]
-	if card_center.style.display is "inline"
-		if card_lower.style.display is "inline"
-			card_lower.style.display = "none"
-			card_center.style.display = "none"
-		else
-			card_lower.style.display = "inline"
-	else
-		card_center.style.display = "inline"
-
-@collapseCard = (card_id) ->
-	card = document.getElementById(card_id)
-	card_center = card.getElementsByClassName("card_center")[0]
-	card_lower = card.getElementsByClassName("card_lower")[0]
-	if card_center.style.display is "inline"
-		if card_lower.style.display is "inline"
-			card_lower.style.display = "none"
-		else
-			card_center.style.display = "none"
-	else
-		card_center.style.display = "inline"
-		card_lower.style.display = "inline"
-
-class @CardManager
+class CardManager
 	constructor: (cards) ->
 		@cards = {}
-		for card in cards
+		card_array = (card for k, card of cards)
+		card_array.sort( (a,b) -> a.name.toLowerCase() > b.name.toLowerCase() )
+		for card in card_array
 			[side, faction, type] = [card['side'], card['faction'], card['type']]
 			if not @cards[side]?
 				@cards[side] = {}
@@ -175,3 +155,9 @@ class ProgramCard extends ShareableCard
 class ResourceCard extends ShareableCard
 
 class UpgradeCard extends TrashableCard
+
+for card in card_data["cards"] when card["game_id"]?
+	@cards[card["card_id"]] = makeCard(card)
+
+manager = new CardManager(@cards)
+@sides = {'Corp': manager.toTable('Corp'), 'Runner': manager.toTable('Runner')}

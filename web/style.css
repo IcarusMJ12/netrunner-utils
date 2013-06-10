@@ -6,8 +6,12 @@
 .card_stats {float: right;}
 .card_center, .card_lower {display: none;}
 .card_lower {font-style: italic;}
+
 table {border-collapse: collapse;}
 th, td {border: 1px solid black; vertical-align: top;}
-.controls {width: 100%;}
+
+#controls {width: 100%;}
 .control {float: left; border-style: solid; border-width: 2px; margin: 2px}
-#main {float: left;}
+
+.tab {display: none;}
+#tabs {float: left;}
