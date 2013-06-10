@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Android: Netrunner Card Reference</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script src="cards.js"></script>
+		<script src="model.js"></script>
+		<script src="ui.js"></script>
+	</head>
+	<body onload="initialize();">
+		<div id="controls">
+			<div class="control" onclick="switchToTab('corp_tab')">Corp</div>
+			<div class="control" onclick="switchToTab('runner_tab')">Runner</div>
+		</div>
+		<div id="tabs">
+			<div id="corp_tab" class="tab">
+			</div>
+			<div id="runner_tab" class="tab">
+			</div>
+		</div>
+	</body>
+</html>
