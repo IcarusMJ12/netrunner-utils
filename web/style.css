@@ -1,3 +1,4 @@
+.card {padding: 2px; box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;}
 .card, .card_header, .card_center, .card_lower {float: left; width: 100%;}
 .card_header {font-weight: bold;}
 .card_leftside {float: left; width:70%;}
@@ -7,11 +8,19 @@
 .card_center, .card_lower {display: none;}
 .card_lower {font-style: italic;}
 
+.deck {display: none; position: fixed; bottom: 0; left: 0; background-color: white; width: 100%;}
+.deck_field {position: relative; float: left; padding: 2px;}
+.key, .value {float: left;}
+
 table {border-collapse: collapse;}
 th, td {border: 1px solid black; vertical-align: top;}
+table tr:first-child th {border-top: 0;}
+table tr:last-child td {border-bottom: 0;}
+table tr td:first-child, table tr th:first-child {border-left: 0;}
+table tr td:last-child, table tr th:last-child {border-right: 0;}
 
 #controls {width: 100%;}
-.control {float: left; border-style: solid; border-width: 2px; margin: 2px}
+.control {float: left; border-style: solid; border-width: 2px; padding-left: 2px; padding-right: 2px; margin: 2px}
 
 .tab {display: none;}
 #tabs {float: left;}
