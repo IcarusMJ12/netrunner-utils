@@ -36,7 +36,6 @@ class BaseDeck
             return false
         if card.type is 'Identity'
             if @identity?
-                console.log('removing '+@identity.card_id)
                 onCardRemoved(@identity.card_id, 0)
             @identity = card
             onCardAdded(card.card_id, 0)
@@ -44,7 +43,7 @@ class BaseDeck
             @removeInvalidAgendas()
             @recalculateInfluence()
             return true
-        if not card.influence? and (card.faction isnt @faction and card.faction isnt 'Neutral')
+        if not card.influence? and ((card.faction isnt @faction and card.faction isnt 'Neutral') or not @faction?)
             return false
         if @cards[card.card_id]?
             if @cards[card.card_id] == 3
@@ -116,7 +115,7 @@ class CorpDeck extends BaseDeck
     removeInvalidAgendas: ->
         for card_id, card_count of @cards
             card = @all_cards[card_id]
-            if card.faction isnt @faction and card.faction isnt 'Neutral'
+            if card.type is 'Agenda' and card.faction isnt @faction and card.faction isnt 'Neutral'
                 @size -= card_count
                 for i in [card_count-1..0]
                     onCardRemoved(card_id, i)

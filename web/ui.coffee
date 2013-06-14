@@ -18,9 +18,9 @@ faction_color_map = @faction_color_map
     deck_div = document.getElementById(card.side + '_deck')
     if not @decks[card.side]?
         @decks[card.side] = @makeDeck(card.side)
-        deck_div.style.display = "inline"
     deck = @decks[card.side]
     if deck.addCard(card)
+        deck_div.style.display = "inline"
         console.log("+"+card.name)
         @updateDeckDiv(deck_div, deck)
         document.getElementById(card.side + '_padding').style.height = deck_div.offsetHeight + 'px'

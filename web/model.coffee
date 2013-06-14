@@ -39,7 +39,7 @@ class CardManager
     constructor: (cards) ->
         @cards = {}
         card_array = (card for k, card of cards)
-        card_array.sort( (a,b) -> a.name.toLowerCase() > b.name.toLowerCase() )
+        card_array.sort( (a,b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1 )
         for card in card_array
             [side, faction, type] = [card['side'], card['faction'], card['type']]
             if not @cards[side]?
