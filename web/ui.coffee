@@ -1,5 +1,17 @@
 faction_color_map = @faction_color_map
 
+@toggleDeckView = (side) ->
+    deck_div = document.getElementById(side + '_deck')
+    expanded = deck_div.getElementsByClassName('expanded')[0]
+    padding = document.getElementById(side + '_padding')
+    if expanded.style.display is 'inline'
+        console.log('-visible')
+        expanded.style.display = 'none'
+    else
+        console.log('+visible')
+        expanded.style.display = 'inline'
+    document.getElementById(side + '_padding').style.height = deck_div.offsetHeight + 'px'
+
 @updateDeckDiv = (deck_div, deck) ->
     invalid_properties = deck.validateDeck()
     fields = deck_div.getElementsByClassName("deck_field")
@@ -23,6 +35,10 @@ faction_color_map = @faction_color_map
         deck_div.style.display = "inline"
         console.log("+"+card.name)
         @updateDeckDiv(deck_div, deck)
+        if card.type isnt 'Identity'
+            document.getElementById(card.side + '_' + card.type).innerHTML = deck.getOrderedDivsByType(card.type)
+        else if card.side is 'Corp'
+            document.getElementById(card.side + '_' + 'Agenda').innerHTML = deck.getOrderedDivsByType('Agenda')
         document.getElementById(card.side + '_padding').style.height = deck_div.offsetHeight + 'px'
 
 @removeFromDeck = (card_id) ->
@@ -39,6 +55,8 @@ faction_color_map = @faction_color_map
             deck_div.style.display = "none"
             document.getElementById(card.side + '_padding').style.height = 0
             return
+        if card.type isnt 'Identity'
+            document.getElementById(card.side + '_' + card.type).innerHTML = deck.getOrderedDivsByType(card.type)
         document.getElementById(card.side + '_padding').style.height = deck_div.offsetHeight
 
 @expandCard = (card_id) ->
@@ -80,4 +98,20 @@ faction_color_map = @faction_color_map
 @initialize = () ->
     document.getElementById('Corp_viewer').innerHTML = @sides['Corp']
     document.getElementById('Runner_viewer').innerHTML = @sides['Runner']
+    for side, card_types of @card_types_order
+        console.log(side + " " + card_types)
+        expanded = document.getElementById(side + '_deck').getElementsByClassName('expanded')[0]
+        table = "<table class=\"card_list\">\n"
+        table += "<tr class=\"card_list\">\n"
+        width = 80 / (card_types.length - 1)
+        for card_type in card_types
+            if card_type isnt 'Identity'
+                table += "<th class=\"card_list\" style='width: #{width}%'>#{card_type}</th>\n"
+        table += "</tr>\n"
+        table += "<tr class=\"card_list\">\n"
+        for card_type in card_types
+            if card_type isnt 'Identity'
+                table += "<td id=\"#{side + '_' + card_type}\" class=\"card_list\" style='width: #{width}%'></td>"
+        table += "</tr>\n"
+        expanded.innerHTML = table
     @switchToTab('Corp_tab')

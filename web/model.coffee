@@ -18,6 +18,8 @@ card_types_order =
     Corp: ["Identity", "Agenda", "Asset", "Upgrade", "ICE", "Operation"]
     Runner: ["Identity", "Event", "Program", "Hardware", "Resource"]
 
+@card_types_order = card_types_order
+
 factions_order =
     Corp: ["Haas-Bioroid", "Jinteki", "NBN", "Weyland Consortium", "Neutral"]
     Runner: ["Anarch", "Criminal", "Shaper", "Neutral"]
@@ -39,7 +41,7 @@ class CardManager
     constructor: (cards) ->
         @cards = {}
         card_array = (card for k, card of cards)
-        card_array.sort( (a,b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1 )
+        card_array.sort( (a, b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1 )
         for card in card_array
             [side, faction, type] = [card['side'], card['faction'], card['type']]
             if not @cards[side]?
@@ -52,15 +54,15 @@ class CardManager
     
     toTable: (side) ->
         column_divisor = factions_order[side].length
-        result = "<table>\n"
-        result += "<tr>\n"
+        result = "<table class=\"card_viewer\">\n"
+        result += "<tr class=\"card_viewer\">\n"
         for faction in factions_order[side]
-            result+= "<th style=\"width: #{100/column_divisor}%; background-color: #{faction_color_map[faction]};\">#{faction}</th>\n"
+            result += "<th class=\"card_viewer\" style=\"width: #{100/column_divisor}%; background-color: #{faction_color_map[faction]};\">#{faction}</th>\n"
         result += "</tr>\n"
         for type in card_types_order[side]
-            result += "<tr>\n"
+            result += "<tr class=\"card_viewer\">\n"
             for faction in factions_order[side]
-                result += "<td style=\"width: #{100/column_divisor}%; background-color: #{faction_color_map[faction]};\">\n"
+                result += "<td class=\"card_viewer\" style=\"width: #{100/column_divisor}%; background-color: #{faction_color_map[faction]};\">\n"
                 if @cards[side][type][faction]?
                     for card in @cards[side][type][faction]
                         result += card.toDiv()

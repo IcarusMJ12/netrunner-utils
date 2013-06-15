@@ -15,9 +15,13 @@ body {color: white; background-color: black; -webkit-user-select: none; -moz-use
 .deck {display: none; position: fixed; bottom: 0; left: 0; background-color: white; width: 100%;}
 .deck_field {position: relative; float: left; padding: 2px;}
 .key, .value {float: left;}
+.collapsed {position: relative; float: left; width: 100%;}
+.expanded {position: relative; float: left; width: 100%; display: none;}
+.card_list {background-color: black; padding: 2px;}
 
 table {border-collapse: collapse;}
-th, td {border: 3px solid black; vertical-align: top;}
+.card_viewer th, .card_viewer td {border: 3px solid black; vertical-align: top;}
+.card_list th, .card_list td {border: 3px solid white; vertical-align: top;}
 table tr:first-child th {border-top: 0;}
 table tr:last-child td {border-bottom: 0;}
 table tr td:first-child, table tr th:first-child {border-left: 0;}

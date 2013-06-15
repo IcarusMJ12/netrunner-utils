@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Android: Netrunner Card Reference</title>
+		<title>Android: Netrunner Deck Builder</title>
 		<link rel="icon" type="image/png" href="favicon.png">
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<script src="cards.js"></script>
@@ -20,24 +20,29 @@
 				<div id="Corp_viewer" class="viewer"></div>
 				<div id="Corp_padding" class="padding"></div>
 				<div id="Corp_deck" class="deck">
-					<div class="collapsed">
+					<div class="collapsed" onclick="toggleDeckView('Corp')">
 						<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
-						<div class="deck_field" data-property="getAgendaPoints" data-property_limit="getAgendaPointLimit"><div class="key"><strong>AP:</strong></div><div class="value"></div></div>
-						<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
-						<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+						<div style="float: right;">
+							<div class="deck_field" data-property="getAgendaPoints" data-property_limit="getAgendaPointLimit"><div class="key"><strong>AP:</strong></div><div class="value"></div></div>
+							<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
+							<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+						</div>
+						<div style="clear: both;"></div>
 					</div>
-					<div class="expanded">
-					</div>
+					<div class="expanded"></div>
 				</div>
 			</div>
 			<div id="Runner_tab" class="tab">
 				<div id="Runner_viewer" class="viewer"></div>
 				<div id="Runner_padding"class="padding"></div>
 				<div id="Runner_deck" class="deck">
-					<div class="collapsed">
+					<div class="collapsed" onclick="toggleDeckView('Runner')">
 						<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
-						<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
-						<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+						<div style="float: right;">
+							<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
+							<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+						</div>
+						<div style="clear: both;"></div>
 					</div>
 					<div class="expanded">
 					</div>

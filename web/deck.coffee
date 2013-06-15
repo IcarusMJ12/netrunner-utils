@@ -31,6 +31,14 @@ class BaseDeck
     getSize: -> return @size
     getInfluence: -> return @current_influence
 
+    getOrderedDivsByType: (type) ->
+        result =[]
+        for card_id, count of @cards
+            if @all_cards[card_id].type is type
+                result.push([@all_cards[card_id].name, count])
+        result.sort( (a, b) -> if a[0].toLowerCase() > b[0].toLowerCase() then 1 else -1)
+        return ("<div style=\"width: 100%; float: left;\">#{i[1] + ' ' + i[0]}</div>" for i in result).join('\n')
+
     addCard: (card) ->
         if card.side isnt @side
             return false
