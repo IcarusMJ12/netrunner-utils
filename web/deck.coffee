@@ -1,3 +1,6 @@
+escape = (s) ->
+    return (''+s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;')
+
 onCardAdded = (card_id, index) ->
     card_div = document.getElementById(card_id)
     card_bars = card_div.getElementsByClassName("progress_bar")
@@ -111,6 +114,25 @@ class BaseDeck
         if @size < @getDeckSizeLimit()
             invalid_properties.push('getSize')
         return invalid_properties
+
+    makeOctgnCard: (card_id) ->
+        card = @all_cards[card_id]
+        return "<card qty=\"#{@cards[card_id]}\" id=\"#{card.id}\">#{escape(card.name)}</card>\n"
+
+    toO8D: ->
+        for card_id, count of @cards
+            game_id = @all_cards[card_id].game_id
+            break
+        result = '<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n'
+        result += "<deck game=\"#{game_id}\">"
+        result += "<section name=\"Identity\">"
+        if @identity?
+            result += "<card qty=\"1\" id=\"#{@identity.id}\">#{escape(@identity.name)}</card>\n"
+        result += "</section>\n"
+        result += "<section name=\"R&amp;D / Stack\">\n"
+        result += (@makeOctgnCard(card_id) for card_id, count of @cards).join('')
+        result += "</section>\n"
+        result += "</deck>\n"
 
 class CorpDeck extends BaseDeck
     constructor: (cards) ->

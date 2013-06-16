@@ -77,6 +77,7 @@ class BaseCard
         @card_text = keywords['card_text']
         @count = keywords['count']
         @faction = keywords['faction']
+        @game_id = keywords['game_id']
         @id = keywords['id']
         @is_unique = keywords['is_unique']
         @name = keywords['name']

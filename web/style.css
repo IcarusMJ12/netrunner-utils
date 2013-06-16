@@ -20,6 +20,7 @@ body {color: white; background-color: black; -webkit-user-select: none; -moz-use
 .card_list {background-color: black; padding: 2px;}
 
 table {border-collapse: collapse;}
+.card_list table {float: left;}
 .card_viewer th, .card_viewer td {border: 3px solid black; vertical-align: top;}
 .card_list th, .card_list td {border: 3px solid white; vertical-align: top;}
 table tr:first-child th {border-top: 0;}
@@ -28,7 +29,7 @@ table tr td:first-child, table tr th:first-child {border-left: 0;}
 table tr td:last-child, table tr th:last-child {border-right: 0;}
 
 #controls {width: 100%; color: black; background-color: black; font-weight: bold;}
-.control {float: left; border-style: solid; border-width: 2px; border-top: 0; border-bottom: 0; padding-left: 2px; padding-right: 2px; background-color: white;}
+.control {float: left; border-style: solid; border-width: 2px; border-top: 0; border-bottom: 0; padding-left: 2px; padding-right: 2px; background-color: white; color: black;}
 
 .tab {display: none;}
 #tabs {float: left;}

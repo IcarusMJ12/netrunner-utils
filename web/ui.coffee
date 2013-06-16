@@ -1,5 +1,9 @@
 faction_color_map = @faction_color_map
 
+@saveDeck = (side) ->
+    deck = @decks[side]
+    open("data:application/xml;charset=utf-8,#{encodeURIComponent(deck.toO8D())}")
+
 @toggleDeckView = (side) ->
     deck_div = document.getElementById(side + '_deck')
     expanded = deck_div.getElementsByClassName('expanded')[0]
@@ -99,19 +103,25 @@ faction_color_map = @faction_color_map
     document.getElementById('Corp_viewer').innerHTML = @sides['Corp']
     document.getElementById('Runner_viewer').innerHTML = @sides['Runner']
     for side, card_types of @card_types_order
-        console.log(side + " " + card_types)
-        expanded = document.getElementById(side + '_deck').getElementsByClassName('expanded')[0]
-        table = "<table class=\"card_list\">\n"
-        table += "<tr class=\"card_list\">\n"
         width = 80 / (card_types.length - 1)
+        expanded = document.getElementById(side + '_deck').getElementsByClassName('expanded')[0]
+        expanded_html = "<div style='width: 80%; position: relative; float: left;'>\n"
+        expanded_html += "<table class=\"card_list\">\n"
+        expanded_html += "<tr class=\"card_list\">\n"
         for card_type in card_types
             if card_type isnt 'Identity'
-                table += "<th class=\"card_list\" style='width: #{width}%'>#{card_type}</th>\n"
-        table += "</tr>\n"
-        table += "<tr class=\"card_list\">\n"
+                expanded_html += "<th class=\"card_list\" style='width: #{width}%'>#{card_type}</th>\n"
+        expanded_html += "</tr>\n"
+        expanded_html += "<tr class=\"card_list\">\n"
         for card_type in card_types
             if card_type isnt 'Identity'
-                table += "<td id=\"#{side + '_' + card_type}\" class=\"card_list\" style='width: #{width}%'></td>"
-        table += "</tr>\n"
-        expanded.innerHTML = table
+                expanded_html += "<td id=\"#{side + '_' + card_type}\" class=\"card_list\" style='width: #{width}%'></td>"
+        expanded_html += "</tr>\n"
+        expanded_html += "</table>\n"
+        expanded_html += "</div>\n"
+        expanded_html += "<div style='float: right;'>\n"
+        expanded_html += "<div class='control' style='width:100%'; onclick=saveDeck('#{side}')>Export (o8d)</div>\n"
+        expanded_html += "<div class='control' style='width:100%'; onclick=clearDeck('#{side}')>Clear</div>\n"
+        expanded_html += "</div>\n"
+        expanded.innerHTML = expanded_html
     @switchToTab('Corp_tab')
