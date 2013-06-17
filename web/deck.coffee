@@ -119,6 +119,16 @@ class BaseDeck
         card = @all_cards[card_id]
         return "<card qty=\"#{@cards[card_id]}\" id=\"#{card.id}\">#{escape(card.name)}</card>\n"
 
+    toTSV: ->
+        result = ''
+        if @identity?
+            result += "1\t#{@identity.card_id}\t#{escape(@identity.name)}\n"
+        result += '#\tcard_id\tname\n'
+        sorted_cards = ([count, card_id, escape(@all_cards[card_id].name)] for card_id, count of @cards)
+        sorted_cards.sort( (a, b) -> if a[2].toLowerCase() > b[2].toLowerCase() then 1 else -1)
+        result += ("#{i[0]}\t#{i[1]}\t#{i[2]}" for i in sorted_cards).join('\n')
+        return result
+
     toO8D: ->
         for card_id, count of @cards
             game_id = @all_cards[card_id].game_id
@@ -133,6 +143,7 @@ class BaseDeck
         result += (@makeOctgnCard(card_id) for card_id, count of @cards).join('')
         result += "</section>\n"
         result += "</deck>\n"
+        return result
 
 class CorpDeck extends BaseDeck
     constructor: (cards) ->
