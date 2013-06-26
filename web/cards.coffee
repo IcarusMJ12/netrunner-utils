@@ -1,6 +1,5 @@
 # cards indexed by card_id, i.e. serial number, which we will also use for card div ids
 @cards = {}
-@sides = {}
 
 card_types_order =
     Corp: ["Identity", "Agenda", "Asset", "Upgrade", "ICE", "Operation"]
@@ -171,5 +170,4 @@ class UpgradeCard extends TrashableCard
 for card in raw_card_data["cards"] when card["game_id"]?
     @cards[card["card_id"]] = makeCard(card)
 
-manager = new CardManager(@cards)
-@sides = {'Corp': manager.toTable('Corp'), 'Runner': manager.toTable('Runner')}
+@card_manager = new CardManager(@cards)
