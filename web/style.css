@@ -10,7 +10,7 @@ body {color: white; background-color: black; -webkit-user-select: none; -moz-use
 .card_center, .card_lower {display: none;}
 .card_lower {font-style: italic;}
 
-.progress_bar {position: absolute; height: 100%; background-color: black; z-index: 5;display: none;}
+.progress_bar {position: absolute; height: 100%; background-color: black; z-index: 5; display: none;}
 
 .deck {display: none; position: fixed; bottom: 0; left: 0; background-color: white; width: 100%;}
 .deck_field {position: relative; float: left; padding: 2px;}
@@ -33,3 +33,12 @@ table tr td:last-child, table tr th:last-child {border-right: 0;}
 
 .tab {display: none;}
 #tabs {float: left;}
+
+.haas-bioroid {background-color: #220055} /*'#6600FF'*/
+.jinteki {background-color: #3E0B0B} /*'#BB2222'*/
+.nbn {background-color: #554900} /*'#FFDD00'*/
+.weyland_consortium {background-color: #002211} /*'#006633'*/
+.neutral {background-color: #2D2D2D} /*'#888888'*/
+.anarch {background-color: #553300} /*'#FF9900'*/
+.criminal {background-color: #003849} /*'#00AADD'*/
+.shaper {background-color: #00490B} /*'#00DD22'*/

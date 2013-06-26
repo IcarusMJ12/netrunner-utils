@@ -2,18 +2,6 @@
 @cards = {}
 @sides = {}
 
-faction_color_map =
-    'Haas-Bioroid': '#220055' #'#6600FF'
-    'Jinteki': '#3E0B0B' #'#BB2222'
-    'NBN': '#554900' #'#FFDD00'
-    'Weyland Consortium': '#002211' #'#006633'
-    'Neutral': '#2D2D2D' #'#888888'
-    'Anarch': '#553300' #'#FF9900'
-    'Criminal': '#003849' #'#00AADD'
-    'Shaper': '#00490B' #'#00DD22'
-
-@faction_color_map = faction_color_map
-
 card_types_order =
     Corp: ["Identity", "Agenda", "Asset", "Upgrade", "ICE", "Operation"]
     Runner: ["Identity", "Event", "Program", "Hardware", "Resource"]
@@ -57,12 +45,14 @@ class CardManager
         result = "<table class=\"card_viewer\">\n"
         result += "<tr class=\"card_viewer\">\n"
         for faction in factions_order[side]
-            result += "<th class=\"card_viewer\" style=\"width: #{100/column_divisor}%; background-color: #{faction_color_map[faction]};\">#{faction}</th>\n"
+            faction_class_name = faction.toLowerCase().replace(' ', '_')
+            result += "<th class=\"card_viewer #{faction_class_name}\" style=\"width: #{100/column_divisor}%;\">#{faction}</th>\n"
         result += "</tr>\n"
         for type in card_types_order[side]
             result += "<tr class=\"card_viewer\">\n"
             for faction in factions_order[side]
-                result += "<td class=\"card_viewer\" style=\"width: #{100/column_divisor}%; background-color: #{faction_color_map[faction]};\">\n"
+                faction_class_name = faction.toLowerCase().replace(' ', '_')
+                result += "<td class=\"card_viewer #{faction_class_name}\" style=\"width: #{100/column_divisor}%;\">\n"
                 if @cards[side][type][faction]?
                     for card in @cards[side][type][faction]
                         result += card.toDiv()
@@ -89,6 +79,7 @@ class BaseCard
         @set_id = keywords['set_id']
         @illustrator = keywords['illustrator']
         @subtype = keywords['subtype']
+        @short_name = @name.split(':')[if @side is 'Corp' and @type is 'Identity' then 1 else 0]
     
     toDiv: ->
         maximum_index = if @type is 'Identity' then 0 else 2
@@ -98,7 +89,7 @@ class BaseCard
             <div style="position: relative; float: left; z-index: 10; width: 100%;">
                 <div class="card_header">
                     <div class="card_leftside" onclick="addToDeck('#{@card_id}')" oncontextmenu="removeFromDeck('#{@card_id}'); return false;">
-                        <div class="card_name"#{if @is_unique then ' style="font-style: italic;"' else ''}>#{@name.split(':')[if @side is 'Corp' and @type is 'Identity' then 1 else 0]}</div>
+                        <div class="card_name"#{if @is_unique then ' style="font-style: italic;"' else ''}>#{@short_name}</div>
                         <div class="card_subtype">#{if @subtype? then '('+@subtype+')' else ''}</div>
                     </div>
                     <div class="card_stats" onclick="expandCard('#{@card_id}')" oncontextmenu="collapseCard('#{@card_id}'); return false;">#{@getStats()}</div>
@@ -177,7 +168,7 @@ class ResourceCard extends ShareableCard
 
 class UpgradeCard extends TrashableCard
 
-for card in card_data["cards"] when card["game_id"]?
+for card in raw_card_data["cards"] when card["game_id"]?
     @cards[card["card_id"]] = makeCard(card)
 
 manager = new CardManager(@cards)

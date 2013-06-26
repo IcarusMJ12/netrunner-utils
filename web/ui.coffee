@@ -1,5 +1,3 @@
-faction_color_map = @faction_color_map
-
 @exportDeckToO8D = (side) ->
     deck = @decks[side]
     open("data:application/xml;charset=utf-8,#{encodeURIComponent(deck.toO8D())}")
@@ -17,20 +15,21 @@ faction_color_map = @faction_color_map
     deck_div.getElementsByClassName('expanded')[0].style.display = 'none'
     @updateDeckDiv(deck_div, deck)
     document.getElementById(side + '_padding').style.height = deck_div.offsetHeight + 'px'
+    #TODO: fix bug clearing all bars regardless of side
     for bar in document.getElementsByClassName("progress_bar")
         bar.style.display = "none"
 
 @toggleDeckView = (side) ->
-    deck_div = document.getElementById(side + '_deck')
-    expanded = deck_div.getElementsByClassName('expanded')[0]
-    padding = document.getElementById(side + '_padding')
+    deck_div = $('#' + side + '_deck')
+    expanded = $('.expanded', deck_div)[0]
+    padding = $('#' + side + '_padding')
     if expanded.style.display is 'inline'
         console.log('-visible')
         expanded.style.display = 'none'
     else
         console.log('+visible')
         expanded.style.display = 'inline'
-    document.getElementById(side + '_padding').style.height = deck_div.offsetHeight + 'px'
+    padding[0].style.height = deck_div[0].offsetHeight + 'px'
 
 @updateDeckDiv = (deck_div, deck) ->
     invalid_properties = deck.validateDeck()

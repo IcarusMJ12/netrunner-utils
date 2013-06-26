@@ -1,6 +1,3 @@
-escape = (s) ->
-    return (''+s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;')
-
 onCardAdded = (card_id, index) ->
     card_div = document.getElementById(card_id)
     card_bars = card_div.getElementsByClassName("progress_bar")
@@ -117,14 +114,14 @@ class BaseDeck
 
     makeOctgnCard: (card_id) ->
         card = @all_cards[card_id]
-        return "<card qty=\"#{@cards[card_id]}\" id=\"#{card.id}\">#{escape(card.name)}</card>\n"
+        return "<card qty=\"#{@cards[card_id]}\" id=\"#{card.id}\">#{$.escape(card.name)}</card>\n"
 
     toTSV: ->
         result = ''
         if @identity?
-            result += "1\t#{@identity.card_id}\t#{escape(@identity.name)}\n"
+            result += "1\t#{@identity.card_id}\t#{$.escape(@identity.name)}\n"
         result += '#\tcard_id\tname\n'
-        sorted_cards = ([count, card_id, escape(@all_cards[card_id].name)] for card_id, count of @cards)
+        sorted_cards = ([count, card_id, $.escape(@all_cards[card_id].name)] for card_id, count of @cards)
         sorted_cards.sort( (a, b) -> if a[2].toLowerCase() > b[2].toLowerCase() then 1 else -1)
         result += ("#{i[0]}\t#{i[1]}\t#{i[2]}" for i in sorted_cards).join('\n')
         return result
@@ -137,7 +134,7 @@ class BaseDeck
         result += "<deck game=\"#{game_id}\">"
         result += "<section name=\"Identity\">"
         if @identity?
-            result += "<card qty=\"1\" id=\"#{@identity.id}\">#{escape(@identity.name)}</card>\n"
+            result += "<card qty=\"1\" id=\"#{@identity.id}\">#{$.escape(@identity.name)}</card>\n"
         result += "</section>\n"
         result += "<section name=\"R&amp;D / Stack\">\n"
         result += (@makeOctgnCard(card_id) for card_id, count of @cards).join('')

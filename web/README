@@ -1,0 +1,8 @@
+This is an online deck builder for Android: Netrunner
+
+To prepare dependencies, you need to run:
+	pushd ../
+	fetch_cards.py <octn_anr_plugin_repo_path> <data_path>
+	generate_cards_json.py <data_path> web/cards.js
+	popd
+	ender build qwery-mobile bean underscore
