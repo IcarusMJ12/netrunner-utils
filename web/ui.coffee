@@ -140,8 +140,8 @@
     expanded.innerHTML = expanded_html
 
 @initialize = () ->
-    document.getElementById('Corp_viewer').innerHTML = @card_manager.toTable('Corp')
-    document.getElementById('Runner_viewer').innerHTML = @card_manager.toTable('Runner')
+    document.getElementById('Corp_viewer').innerHTML = @card_viewer.toTable('Corp')
+    document.getElementById('Runner_viewer').innerHTML = @card_viewer.toTable('Runner')
     for side, card_types of @card_types_order
         @makeDeckExpandedDiv(side, card_types)
     @switchToTab('Corp_tab')

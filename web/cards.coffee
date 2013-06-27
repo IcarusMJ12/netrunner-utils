@@ -24,7 +24,7 @@ makeCard = (json) ->
         when 'Resource' then new ResourceCard(json)
         when 'Upgrade' then new UpgradeCard(json)
 
-class CardManager
+class CardViewer
     constructor: (cards) ->
         @cards = {}
         card_array = (card for k, card of cards)
@@ -109,7 +109,7 @@ class ShareableCard extends BaseCard
         @influence = keywords['influence']
     
     getStats: ->
-        "#{@influence}/#{@cost}/-"
+        "#{@influence}&#8226;#{@cost}<"
 
 class TrashableCard extends ShareableCard
     constructor: (keywords) ->
@@ -117,7 +117,7 @@ class TrashableCard extends ShareableCard
         @trash_cost = keywords['trash_cost']
 
     getStats: ->
-        "#{@influence}/#{@cost}/#{if @trash_cost? then @trash_cost else '-'}"
+        "#{@influence}&#8226;#{@cost}<#{if @trash_cost? then @trash_cost else '-'}]"
 
 class AgendaCard extends BaseCard
     constructor: (keywords) ->
@@ -126,7 +126,7 @@ class AgendaCard extends BaseCard
         @agenda_points = keywords['agenda_points']
 
     getStats: ->
-        "-/#{@advancement_cost}/#{@agenda_points}"
+        "#{@advancement_cost}<#{@agenda_points}A"
 
 class AssetCard extends TrashableCard
 
@@ -140,7 +140,7 @@ class ICECard extends ShareableCard
         @strength = keywords['strength']
 
     getStats: ->
-        "#{@influence}/#{@cost}/#{@strength}"
+        "#{@influence}&#8226;#{@cost}<#{@strength}S"
 
 class IdentityCard extends BaseCard
     constructor: (keywords) ->
@@ -150,7 +150,7 @@ class IdentityCard extends BaseCard
         @min_deck_size = keywords['min_deck_size']
 
     getStats: ->
-        "#{@influence_limit}/#{@min_deck_size}/#{if @base_link? then @base_link else '-'}"
+        "#{@influence_limit}&#8226;#{@min_deck_size}D#{if @base_link? then (@base_link + '~') else ''}"
 
 class OperationCard extends ShareableCard
 
@@ -161,13 +161,14 @@ class ProgramCard extends ShareableCard
         @strength = keywords['strength']
 
     getStats: ->
-        "#{@influence}/#{@cost}/#{if @strength? then @strength else '-'}"
+        "#{@influence}&#8226;#{@cost}<#{if @memory_cost is 2 then '#' else '@'} #{if @strength? then (@strength + 'S') else ''}"
 
 class ResourceCard extends ShareableCard
 
 class UpgradeCard extends TrashableCard
 
+#TODO: this filter needs to be a feature of CardViewer
 for card in raw_card_data["cards"] when card["game_id"]?
     @cards[card["card_id"]] = makeCard(card)
 
-@card_manager = new CardManager(@cards)
+@card_viewer = new CardViewer(@cards)
