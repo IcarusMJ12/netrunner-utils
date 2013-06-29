@@ -24,41 +24,77 @@ makeCard = (json) ->
         when 'Resource' then new ResourceCard(json)
         when 'Upgrade' then new UpgradeCard(json)
 
-class CardViewer
+class @CardViewer
     constructor: (cards) ->
         @cards = {}
+        @viewers = {}
         card_array = (card for k, card of cards)
         card_array.sort( (a, b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1 )
         for card in card_array
             [side, faction, type] = [card['side'], card['faction'], card['type']]
             if not @cards[side]?
                 @cards[side] = {}
+                @viewers[side] = $("##{side}_viewer")[0]
             if not @cards[side][type]?
                 @cards[side][type] = {}
             if not @cards[side][type][faction]?
                 @cards[side][type][faction] = []
             @cards[side][type][faction].push(card)
+        @populate()
+        $(document).on('filter_cards', (filter_f) => @filter(filter_f))
+        $(document).on('on_card_added', (card) => @onCardAdded(card))
+        $(document).on('on_card_removed', (card) => @onCardRemoved(card))
+        for card in card_array
+            # fuck css selectors
+            ls = document.getElementById(card.card_id)
+            ls = $(ls).find('.card_leftside')[0]
+            #rs = $("##{card.card_id}").find('.card_stats')[0]
+            ls.onclick = do (card) ->
+                () => $(document).trigger('add_to_deck', card)
+            ls.oncontextmenu = do (card) ->
+                () => $(document).trigger('remove_from_deck', card); return false
     
-    toTable: (side) ->
-        column_divisor = factions_order[side].length
-        result = "<table class=\"card_viewer\">\n"
-        result += "<tr class=\"card_viewer\">\n"
-        for faction in factions_order[side]
-            faction_class_name = faction.toLowerCase().replace(' ', '_')
-            result += "<th class=\"card_viewer #{faction_class_name}\" style=\"width: #{100/column_divisor}%;\">#{faction}</th>\n"
-        result += "</tr>\n"
-        for type in card_types_order[side]
+    populate: () ->
+        for side, viewer of @viewers
+            column_divisor = factions_order[side].length
+            result = "<table class=\"card_viewer\">\n"
             result += "<tr class=\"card_viewer\">\n"
             for faction in factions_order[side]
                 faction_class_name = faction.toLowerCase().replace(' ', '_')
-                result += "<td class=\"card_viewer #{faction_class_name}\" style=\"width: #{100/column_divisor}%;\">\n"
-                if @cards[side][type][faction]?
-                    for card in @cards[side][type][faction]
-                        result += card.toDiv()
-                result += "</td>\n"
+                result += "<th class=\"card_viewer #{faction_class_name}\" style=\"width: #{100/column_divisor}%;\">#{faction}</th>\n"
             result += "</tr>\n"
-        result += "</table>"
-        return result
+            for type in card_types_order[side]
+                result += "<tr class=\"card_viewer\">\n"
+                for faction in factions_order[side]
+                    faction_class_name = faction.toLowerCase().replace(' ', '_')
+                    result += "<td class=\"card_viewer #{faction_class_name}\" style=\"width: #{100/column_divisor}%;\">\n"
+                    if @cards[side][type][faction]?
+                        for card in @cards[side][type][faction]
+                            result += card.toDiv()
+                    result += "</td>\n"
+                result += "</tr>\n"
+            result += "</table>"
+            viewer.innerHTML = result
+
+    filter: (filter_f) ->
+        for card in $('.card')
+            if filter_f(window.cards[card.id])
+                card.style.display = "inline"
+            else
+                card.style.display = "none"
+
+    onCardAdded: (card) ->
+        for bar in $(document.getElementById(card.card_id)).find('.progress_bar')
+            if bar.style.display is "none"
+                bar.style.display = "inline"
+                return
+
+    onCardRemoved: (card) ->
+        for bar in $(document.getElementById(card.card_id)).find('.progress_bar')
+            if bar.style.display is "inline"
+                bar.style.display = "none"
+                return
+
 
 class BaseCard
     constructor: (keywords) ->
@@ -87,7 +123,7 @@ class BaseCard
         <div class='card' id="#{@card_id}">
             <div style="position: relative; float: left; z-index: 10; width: 100%;">
                 <div class="card_header">
-                    <div class="card_leftside" onclick="addToDeck('#{@card_id}')" oncontextmenu="removeFromDeck('#{@card_id}'); return false;">
+                    <div class="card_leftside">
                         <div class="card_name"#{if @is_unique then ' style="font-style: italic;"' else ''}>#{@short_name}</div>
                         <div class="card_subtype">#{if @subtype? then '('+@subtype+')' else ''}</div>
                     </div>
@@ -96,7 +132,7 @@ class BaseCard
                 <div class="card_center">#{@card_text}</div>
                 <div class="card_lower">#{if @flavor? then @flavor else '--'}</div>
             </div>
-            #{("<div class=\"progress_bar\" style=\"width: #{bar_width}%;left: #{i*bar_width}%\"></div>" for i in [0..maximum_index]).join('')}
+            #{("<div class=\"progress_bar\" style=\"width: #{bar_width}%;left: #{i*bar_width}%; display: none;\"></div>" for i in [0..maximum_index]).join('')}
             <div style="clear: both;"></div>
         </div>
         """
@@ -168,7 +204,6 @@ class ResourceCard extends ShareableCard
 class UpgradeCard extends TrashableCard
 
 #TODO: this filter needs to be a feature of CardViewer
-for card in raw_card_data["cards"] when card["game_id"]?
+#for card in raw_card_data["cards"] when card["game_id"]?
+for card in raw_card_data["cards"]
     @cards[card["card_id"]] = makeCard(card)
-
-@card_viewer = new CardViewer(@cards)

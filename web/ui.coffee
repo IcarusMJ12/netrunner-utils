@@ -1,23 +1,14 @@
-@exportDeckToO8D = (side) ->
-    deck = @decks[side]
-    open("data:application/xml;charset=utf-8,#{encodeURIComponent(deck.toO8D())}")
-
-@exportDeckToTSV = (side) ->
-    deck = @decks[side]
-    open("data:text/plain;charset=utf-8,#{encodeURIComponent(deck.toTSV())}")
-
-@deleteDeck = (side) ->
+$(document).on('on_deck_cleared', (side) =>
     @makeDeckExpandedDiv(side, @card_types_order[side])
-    delete @decks[side]
-    deck = @makeDeck(side)
-    deck_div = document.getElementById(side + '_deck')
+    deck = @decks[side]
+    deck_div = $("##{side}_deck")[0]
     deck_div.style.display = 'none'
-    deck_div.getElementsByClassName('expanded')[0].style.display = 'none'
+    $(deck_div).find('.expanded')[0].style.display = 'none'
     @updateDeckDiv(deck_div, deck)
-    document.getElementById(side + '_padding').style.height = deck_div.offsetHeight + 'px'
-    #TODO: fix bug clearing all bars regardless of side
-    for bar in document.getElementsByClassName("progress_bar")
+    $("##{side}_padding")[0].style.height = deck_div.offsetHeight + 'px'
+    for bar in $("##{side}_viewer").find('.progress_bar')
         bar.style.display = "none"
+)
 
 @toggleDeckView = (side) ->
     deck_div = $('#' + side + '_deck')
@@ -44,40 +35,38 @@
         if f.dataset.property_limit?
             value.innerHTML += '/' + deck[f.dataset.property_limit]()
 
-@addToDeck = (card_id) ->
-    card = @cards[card_id]
-    deck_div = document.getElementById(card.side + '_deck')
+$(document).on('on_card_added', (card) =>
+    deck_div = $("##{card.side}_deck")[0]
     if not @decks[card.side]?
         @decks[card.side] = @makeDeck(card.side)
     deck = @decks[card.side]
-    if deck.addCard(card)
-        console.log("+"+card.name)
-        @updateDeckDiv(deck_div, deck)
-        if card.type isnt 'Identity'
-            document.getElementById(card.side + '_' + card.type).innerHTML = deck.getOrderedDivsByType(card.type)
-        else if card.side is 'Corp'
-            document.getElementById(card.side + '_' + 'Agenda').innerHTML = deck.getOrderedDivsByType('Agenda')
-        document.getElementById(card.side + '_padding').style.height = deck_div.offsetHeight + 'px'
-        deck_div.style.display = "inline"
+    console.log("+"+card.name)
+    @updateDeckDiv(deck_div, deck)
+    if card.type isnt 'Identity'
+        $("##{card.side}_#{card.type}")[0].innerHTML = deck.getOrderedDivsByType(card.type)
+    else if card.side is 'Corp'
+        $("##{card.side}_Agenda")[0].innerHTML = deck.getOrderedDivsByType('Agenda')
+    $("##{card.side}_padding")[0].style.height = deck_div.offsetHeight + 'px'
+    deck_div.style.display = "inline"
+)
 
-@removeFromDeck = (card_id) ->
-    card = @cards[card_id]
+$(document).on('on_card_removed', (card) =>
     if not @decks[card.side]?
         return
     deck = @decks[card.side]
-    if deck.removeCard(card)
-        deck_div = document.getElementById(card.side + '_deck')
-        console.log("-"+card.name)
-        @updateDeckDiv(deck_div, deck)
-        if deck.size == 0 and not deck.identity?
-            delete @decks[card.side]
-            deck_div.style.display = "none"
-            deck_div.getElementsByClassName('expanded')[0].style.display = 'none'
-            document.getElementById(card.side + '_padding').style.height = 0
-            return
-        if card.type isnt 'Identity'
-            document.getElementById(card.side + '_' + card.type).innerHTML = deck.getOrderedDivsByType(card.type)
-        document.getElementById(card.side + '_padding').style.height = deck_div.offsetHeight
+    deck_div = $("##{card.side}_deck")[0]
+    console.log("-"+card.name)
+    @updateDeckDiv(deck_div, deck)
+    if deck.size == 0 and not deck.identity?
+        delete @decks[card.side]
+        deck_div.style.display = "none"
+        $(deck_div).find('.expanded')[0].style.display = 'none'
+        $("##{card.side}_padding").style.height = 0
+        return
+    if card.type isnt 'Identity'
+        $("##{card.side}_#{card.type}")[0].innerHTML = deck.getOrderedDivsByType(card.type)
+    $("##{card.side}_padding")[0].style.height = deck_div.offsetHeight + 'px'
+)
 
 @expandCard = (card_id) ->
     card = document.getElementById(card_id)
@@ -133,15 +122,17 @@
     expanded_html += "</table>\n"
     expanded_html += "</div>\n"
     expanded_html += "<div style='float: right;'>\n"
-    expanded_html += "<div class='control' style='width:100%'; onclick=exportDeckToO8D('#{side}')>Export (o8d)</div>\n"
-    expanded_html += "<div class='control' style='width:100%'; onclick=exportDeckToTSV('#{side}')>Export (tsv)</div>\n"
-    expanded_html += "<div class='control' style='width:100%'; onclick=deleteDeck('#{side}')>Delete</div>\n"
+    expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('export_to_o8d', '#{side}');\">Export (o8d)</div>\n"
+    expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('export_to_tsv', '#{side}');\">Export (tsv)</div>\n"
+    expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('clear_deck', '#{side}');\">Clear</div>\n"
     expanded_html += "</div>\n"
     expanded.innerHTML = expanded_html
 
 @initialize = () ->
-    document.getElementById('Corp_viewer').innerHTML = @card_viewer.toTable('Corp')
-    document.getElementById('Runner_viewer').innerHTML = @card_viewer.toTable('Runner')
+    @card_viewer = new @CardViewer(@cards)
+    $(document).trigger('filter_cards', (c) -> c["game_id"]?)
     for side, card_types of @card_types_order
+        if not @decks[side]?
+            @decks[side] = @makeDeck(side)
         @makeDeckExpandedDiv(side, card_types)
     @switchToTab('Corp_tab')
