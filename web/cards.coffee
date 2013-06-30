@@ -44,6 +44,8 @@ class @CardViewer
         $(document).on('filter_cards', (filter_f) => @filter(filter_f))
         $(document).on('on_card_added', (card) => @onCardAdded(card))
         $(document).on('on_card_removed', (card) => @onCardRemoved(card))
+        $(document).on('on_deck_cleared', (side) => @onDeckCleared(side))
+        $(document).on('on_deck_loaded', (side, cards, identity, name) => @onDeckLoaded(side, cards, identity))
         $(document).on('card_expanded', (card) => @expandCard(card))
         $(document).on('card_collapsed', (card) => @collapseCard(card))
         for card in card_array
@@ -95,6 +97,18 @@ class @CardViewer
                 bar.style.display = "inline"
                 return
 
+    onDeckCleared: (side) ->
+        for bar in $("##{side}_viewer").find('.progress_bar')
+            bar.style.display = "none"
+    
+    onDeckLoaded: (side, cards, identity) ->
+        @onDeckCleared(side)
+        for card_id, count of cards
+            for i in [1..count]
+                @onCardAdded(window.cards[card_id])
+        if identity?
+            @onCardAdded(identity)
+
     onCardRemoved: (card) ->
         bars = $(document.getElementById(card.card_id)).find('.progress_bar')
         for i in [bars.length-1..0]
@@ -103,8 +117,6 @@ class @CardViewer
                 return
 
     expandCard: (card) ->
-        if card.side isnt @side
-            return
         card = document.getElementById(card.card_id)
         card_center = $(card).find(".card_center")[0]
         card_lower = $(card).find(".card_lower")[0]
@@ -118,8 +130,6 @@ class @CardViewer
             card_center.style.display = "inline"
 
     collapseCard: (card) ->
-        if card.side isnt @side
-            return
         card = document.getElementById(card.card_id)
         card_center = $(card).find(".card_center")[0]
         card_lower = $(card).find(".card_lower")[0]

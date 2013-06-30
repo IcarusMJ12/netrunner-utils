@@ -37,6 +37,8 @@ table tr td:last-child, table tr th:last-child {border-right: 0;}
 .tab {display: none;}
 #tabs {float: left;}
 
+.deck_list_item {margin-left: 20px;}
+
 .haas-bioroid {background-color: #220055} /*'#6600FF'*/
 .jinteki {background-color: #3E0B0B} /*'#BB2222'*/
 .nbn {background-color: #554900} /*'#FFDD00'*/

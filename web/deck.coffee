@@ -13,18 +13,22 @@ class BaseDeck
         @cards = {}
         @current_influence = 0
         @identity = undefined
-        @side = undefined
         @faction = undefined
         @size = 0
+        @modified = false
         $(document).on('add_to_deck', (card) => @addCard(card))
         $(document).on('remove_from_deck', (card) => @removeCard(card))
         $(document).on('clear_deck', (side) => if side is @side then @clear())
         $(document).on('export_to_o8d', (side) => if side is @side then @exportToO8D())
         $(document).on('export_to_tsv', (side) => if side is @side then @exportToTSV())
+        $(document).on('save_deck', (side, name) => if side is @side then @save(name))
+        $(document).on('load_deck', (side, name) => if side is @side then @load(name))
+        @loadLastDeck()
     
     getIdentity: -> return if @identity? then '<strong>' + @identity.name + '</strong> (' + @faction + ')' else '??'
     getSize: -> return @size
     getInfluence: -> return @current_influence
+    isModified: -> return if @modified then '*' else ''
 
     getOrderedDivsByType: (type) ->
         result =[]
@@ -39,11 +43,13 @@ class BaseDeck
             return
         if card.type is 'Identity'
             if @identity?
+                @modified = true
                 $(document).trigger('on_card_removed', @identity)
             @identity = card
             @faction = card.faction
             @removeInvalidAgendas()
             @recalculateInfluence()
+            @modified = true
             $(document).trigger('on_card_added', card)
             return
         if not card.influence? and ((card.faction isnt @faction and card.faction isnt 'Neutral') or not @faction?)
@@ -59,6 +65,7 @@ class BaseDeck
             @agenda_points += card.agenda_points
         if card.faction isnt @faction and card.faction isnt 'Neutral'
             @current_influence += card.influence
+        @modified = true
         $(document).trigger('on_card_added', card)
         return
     
@@ -67,9 +74,10 @@ class BaseDeck
             return false
         if card.type is 'Identity' and card.card_id == @identity.card_id
             if @identity?
+                @modified = true
                 $(document).trigger('on_card_removed', card)
-            @identity = undefined
-            @removeInvalidAgendas()
+                @identity = undefined
+                @removeInvalidAgendas()
             return
         if not @cards[card.card_id]?
             return
@@ -81,6 +89,7 @@ class BaseDeck
         if card.faction isnt @faction and card.faction isnt 'Neutral'
             @current_influence -= card.influence
         @size -= 1
+        @modified = true
         $(document).trigger('on_card_removed', card)
         return true
 
@@ -90,6 +99,7 @@ class BaseDeck
         @identity = undefined
         @faction = undefined
         @size = 0
+        @modified = true
         $(document).trigger('on_deck_cleared', @side)
 
     getInfluenceLimit: ->
@@ -144,12 +154,47 @@ class BaseDeck
         result += "</section>\n"
         result += "</deck>\n"
         open("data:application/xml;charset=utf-8,#{encodeURIComponent(result)}")
+    
+    loadLastDeck: ->
+        return
+
+    save: (name) ->
+        key = "deck:#{name}"
+        card_id = if @identity? then @identity.card_id else undefined
+        localStorage[key] = JSON.stringify({cards: @cards, current_influence: @current_influence, identity: card_id, faction: @faction, size: @size, agenda_points: @agenda_points})
+        localStorage["#{@side}:last_deck"] = key
+        decks_key = "#{@side}:decks"
+        decks = localStorage[decks_key]
+        if decks?
+            decks = JSON.parse(decks)
+        else
+            decks = {}
+        decks[name] = true
+        localStorage[decks_key] = JSON.stringify(decks)
+        @modified = false
+        $(document).trigger('on_deck_saved', @side)
+
+    load: (name) ->
+        key = "deck:#{name}"
+        data = localStorage[key]
+        if data?
+            data = JSON.parse(data)
+            @cards = {}
+            for k, v of data.cards
+                @cards[k] = parseInt(v)
+            @current_influence = parseInt(data.current_influence)
+            @identity = if data.identity? then @all_cards[data.identity] else undefined
+            @faction = data.faction
+            @size = parseInt(data.size)
+            @agenda_points = data.agenda_points
+            @modified = false
+            $(document).trigger('on_deck_loaded', [@side, @cards, @identity, name])
 
 class CorpDeck extends BaseDeck
     constructor: (cards) ->
-        super cards
         @side = 'Corp'
         @agenda_points = 0
+        super cards
 
     clear: () ->
         @agenda_points = 0
@@ -179,8 +224,8 @@ class CorpDeck extends BaseDeck
 
 class RunnerDeck extends BaseDeck
     constructor: (cards) ->
-        super cards
         @side = 'Runner'
+        super cards
     
     removeInvalidAgendas: ->
         return

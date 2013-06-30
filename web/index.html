@@ -9,12 +9,14 @@
 		<script src="raw_data.js"></script>
 		<script src="cards.js"></script>
 		<script src="deck.js"></script>
+		<script src="decks.js"></script>
 		<script src="ui.js"></script>
 	</head>
 	<body onload="initialize();">
 		<div id="controls">
 			<div class="control" onclick="switchToTab('Corp_tab')">Corp</div>
 			<div class="control" onclick="switchToTab('Runner_tab')">Runner</div>
+			<div class="control" onclick="switchToTab('Decks_tab')">Decks</div>
 			<div style="clear: both;"></div>
 		</div>
 		<div id="tabs">
@@ -22,14 +24,18 @@
 				<div id="Corp_viewer" class="viewer"></div>
 				<div id="Corp_padding" class="padding"></div>
 				<div id="Corp_deck" class="deck">
-					<div class="collapsed" onclick="$(document).trigger('deck_view_toggled', 'Corp')">
-						<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
-						<div style="float: right;">
-							<div class="deck_field" data-property="getAgendaPoints" data-property_limit="getAgendaPointLimit"><div class="key"><strong>AP:</strong></div><div class="value"></div></div>
-							<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
-							<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+					<div class="collapsed">
+						<div class="deck_field" data-property="isModified"><div class="value"></div></div>
+						<div style="float: left;"><input id="Corp_name" name="name" placeholder="deck name"></div>
+						<div style="width: 100%;" onclick="$(document).trigger('deck_view_toggled', 'Corp')">
+							<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
+							<div style="float: right;">
+								<div class="deck_field" data-property="getAgendaPoints" data-property_limit="getAgendaPointLimit"><div class="key"><strong>AP:</strong></div><div class="value"></div></div>
+								<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
+								<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+							</div>
+							<div style="clear: both;"></div>
 						</div>
-						<div style="clear: both;"></div>
 					</div>
 					<div class="expanded"></div>
 				</div>
@@ -38,17 +44,23 @@
 				<div id="Runner_viewer" class="viewer"></div>
 				<div id="Runner_padding"class="padding"></div>
 				<div id="Runner_deck" class="deck">
-					<div class="collapsed" onclick="$(document).trigger('deck_view_toggled', 'Runner')">
-						<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
-						<div style="float: right;">
-							<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
-							<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+					<div class="collapsed">
+						<div class="deck_field" data-property="isModified"><div class="value"></div></div>
+						<div style="float: left;"><input id="Runner_name" name="name" placeholder="deck name"></div>
+						<div style="width: 100%;" onclick="$(document).trigger('deck_view_toggled', 'Runner')">
+							<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
+							<div style="float: right;">
+								<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
+								<div class="deck_field" data-property="getInfluence" data-property_limit="getInfluenceLimit"><div class="key"><strong>Inf:</strong></div><div class="value"></div></div>
+							</div>
+							<div style="clear: both;"></div>
 						</div>
-						<div style="clear: both;"></div>
 					</div>
 					<div class="expanded">
 					</div>
 				</div>
+			</div>
+			<div id="Decks_tab" class="tab">
 			</div>
 		</div>
 	</body>

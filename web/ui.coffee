@@ -2,15 +2,17 @@ class DeckViewer
     constructor: (@deck, @card_types) ->
         @side = @deck.side
         @deck_div = $("##{@side}_deck")[0]
-        @bars = $("##{@side}_viewer").find('.progress_bar')
         @expanded = $(@deck_div).find('.expanded')[0]
         @padding = $("##{@side}_padding")[0]
         @fields = $(@deck_div).find(".deck_field")
+        @name = $("##{@side}_name")[0]
         @makeDeckExpandedDiv()
         $(document).on('deck_view_toggled', (side) => if side is @side then @toggleDeckView())
         $(document).on('on_deck_cleared', (side) => if side is @side then @onDeckCleared())
         $(document).on('on_card_added', (card) => if card.side is @side then @onCardAdded(card))
         $(document).on('on_card_removed', (card) => if card.side is @side then @onCardRemoved(card))
+        $(document).on('on_deck_saved', (side) => if side is @side then @onDeckSaved())
+        $(document).on('on_deck_loaded', (side, cards, identity, name) => if side is @side then @onDeckLoaded(name))
 
     makeDeckExpandedDiv: ->
         width = 80 / (@card_types.length - 1)
@@ -31,9 +33,22 @@ class DeckViewer
         expanded_html += "<div style='float: right;'>\n"
         expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('export_to_o8d', '#{@side}');\">Export (o8d)</div>\n"
         expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('export_to_tsv', '#{@side}');\">Export (tsv)</div>\n"
+        expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('save_deck', ['#{@side}', $('##{@side}_name')[0].value]);\">Save</div>\n"
         expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('clear_deck', '#{@side}');\">Clear</div>\n"
         expanded_html += "</div>\n"
         @expanded.innerHTML = expanded_html
+
+    onDeckSaved: ->
+        @updateDeckDiv()
+
+    onDeckLoaded: (name) ->
+        @updateDeckDiv()
+        for type in @card_types
+            if type isnt "Identity"
+                $("##{@side}_#{type}")[0].innerHTML = @deck.getOrderedDivsByType(type)
+        @padding.style.height = @deck_div.offsetHeight + 'px'
+        @deck_div.style.display = "inline"
+        @name.value = name
 
     onDeckCleared: ->
         @makeDeckExpandedDiv()
@@ -41,8 +56,6 @@ class DeckViewer
         @expanded.style.display = 'none'
         @updateDeckDiv()
         @padding.style.height = @deck_div.offsetHeight + 'px'
-        for bar in @bars
-            bar.style.display = "none"
 
     toggleDeckView: ->
         if @expanded.style.display is 'inline'
@@ -70,8 +83,6 @@ class DeckViewer
         @updateDeckDiv()
         if card.type isnt 'Identity'
             $("##{@side}_#{card.type}")[0].innerHTML = @deck.getOrderedDivsByType(card.type)
-        else if @side is 'Corp'
-            $("##{@side}_Agenda")[0].innerHTML = @deck.getOrderedDivsByType('Agenda')
         @padding.style.height = @deck_div.offsetHeight + 'px'
         @deck_div.style.display = "inline"
 
@@ -88,9 +99,8 @@ class DeckViewer
         @padding.style.height = @deck_div.offsetHeight + 'px'
 
 @switchToTab = (tab_id) ->
-    tabs = document.getElementsByClassName("tab")
     target_tab = undefined
-    for tab in tabs
+    for tab in $(".tab")
         if tab.id isnt tab_id
             tab.style.display = "none"
         else
@@ -105,4 +115,5 @@ class DeckViewer
     for side in ['Corp', 'Runner']
         @decks[side] = @makeDeck(side)
         @deck_viewers.push(new DeckViewer(@decks[side], @card_types_order[side]))
+    @decks_viewer = new @DecksViewer()
     @switchToTab('Corp_tab')
