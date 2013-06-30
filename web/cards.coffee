@@ -44,15 +44,21 @@ class @CardViewer
         $(document).on('filter_cards', (filter_f) => @filter(filter_f))
         $(document).on('on_card_added', (card) => @onCardAdded(card))
         $(document).on('on_card_removed', (card) => @onCardRemoved(card))
+        $(document).on('card_expanded', (card) => @expandCard(card))
+        $(document).on('card_collapsed', (card) => @collapseCard(card))
         for card in card_array
             # fuck css selectors
-            ls = document.getElementById(card.card_id)
-            ls = $(ls).find('.card_leftside')[0]
-            #rs = $("##{card.card_id}").find('.card_stats')[0]
-            ls.onclick = do (card) ->
+            card_div = document.getElementById(card.card_id)
+            lhs = $(card_div).find('.card_leftside')[0]
+            lhs.onclick = do (card) ->
                 () => $(document).trigger('add_to_deck', card)
-            ls.oncontextmenu = do (card) ->
+            lhs.oncontextmenu = do (card) ->
                 () => $(document).trigger('remove_from_deck', card); return false
+            rhs = $(card_div).find('.card_stats')[0]
+            rhs.onclick = do (card) ->
+                () => $(document).trigger('card_expanded', card)
+            rhs.oncontextmenu = do (card) ->
+                () => $(document).trigger('card_collapsed', card); return false
     
     populate: () ->
         for side, viewer of @viewers
@@ -90,11 +96,41 @@ class @CardViewer
                 return
 
     onCardRemoved: (card) ->
-        for bar in $(document.getElementById(card.card_id)).find('.progress_bar')
-            if bar.style.display is "inline"
-                bar.style.display = "none"
+        bars = $(document.getElementById(card.card_id)).find('.progress_bar')
+        for i in [bars.length-1..0]
+            if bars[i].style.display is "inline"
+                bars[i].style.display = "none"
                 return
 
+    expandCard: (card) ->
+        if card.side isnt @side
+            return
+        card = document.getElementById(card.card_id)
+        card_center = $(card).find(".card_center")[0]
+        card_lower = $(card).find(".card_lower")[0]
+        if card_center.style.display is "inline"
+            if card_lower.style.display is "inline"
+                card_lower.style.display = "none"
+                card_center.style.display = "none"
+            else
+                card_lower.style.display = "inline"
+        else
+            card_center.style.display = "inline"
+
+    collapseCard: (card) ->
+        if card.side isnt @side
+            return
+        card = document.getElementById(card.card_id)
+        card_center = $(card).find(".card_center")[0]
+        card_lower = $(card).find(".card_lower")[0]
+        if card_center.style.display is "inline"
+            if card_lower.style.display is "inline"
+                card_lower.style.display = "none"
+            else
+                card_center.style.display = "none"
+        else
+            card_center.style.display = "inline"
+            card_lower.style.display = "inline"
 
 class BaseCard
     constructor: (keywords) ->
@@ -127,7 +163,7 @@ class BaseCard
                         <div class="card_name"#{if @is_unique then ' style="font-style: italic;"' else ''}>#{@short_name}</div>
                         <div class="card_subtype">#{if @subtype? then '('+@subtype+')' else ''}</div>
                     </div>
-                    <div class="card_stats" onclick="expandCard('#{@card_id}')" oncontextmenu="collapseCard('#{@card_id}'); return false;">#{@getStats()}</div>
+                    <div class="card_stats">#{@getStats()}</div>
                 </div>
                 <div class="card_center">#{@card_text}</div>
                 <div class="card_lower">#{if @flavor? then @flavor else '--'}</div>

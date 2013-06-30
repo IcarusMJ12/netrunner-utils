@@ -39,7 +39,7 @@ class BaseDeck
             return
         if card.type is 'Identity'
             if @identity?
-                $(document).trigger('on_card_removed', @identity)
+                $(document).trigger('on_card_removed', card)
             @identity = card
             @faction = card.faction
             @removeInvalidAgendas()
@@ -67,7 +67,7 @@ class BaseDeck
             return false
         if card.type is 'Identity' and card.card_id == @identity.card_id
             if @identity?
-                $(document).trigger('on_card_removed', @identity)
+                $(document).trigger('on_card_removed', card)
             @identity = undefined
             @removeInvalidAgendas()
             return
@@ -81,7 +81,7 @@ class BaseDeck
         if card.faction isnt @faction and card.faction isnt 'Neutral'
             @current_influence -= card.influence
         @size -= 1
-        $(document).trigger('on_card_removed', @identity)
+        $(document).trigger('on_card_removed', card)
         return true
 
     clear: () ->

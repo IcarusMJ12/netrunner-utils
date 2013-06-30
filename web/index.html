@@ -22,7 +22,7 @@
 				<div id="Corp_viewer" class="viewer"></div>
 				<div id="Corp_padding" class="padding"></div>
 				<div id="Corp_deck" class="deck">
-					<div class="collapsed" onclick="toggleDeckView('Corp')">
+					<div class="collapsed" onclick="$(document).trigger('deck_view_toggled', 'Corp')">
 						<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
 						<div style="float: right;">
 							<div class="deck_field" data-property="getAgendaPoints" data-property_limit="getAgendaPointLimit"><div class="key"><strong>AP:</strong></div><div class="value"></div></div>
@@ -38,7 +38,7 @@
 				<div id="Runner_viewer" class="viewer"></div>
 				<div id="Runner_padding"class="padding"></div>
 				<div id="Runner_deck" class="deck">
-					<div class="collapsed" onclick="toggleDeckView('Runner')">
+					<div class="collapsed" onclick="$(document).trigger('deck_view_toggled', 'Runner')">
 						<div class="deck_field" data-property="getIdentity"><div class="value">??</div></div>
 						<div style="float: right;">
 							<div class="deck_field" data-property="getSize" data-property_limit="getDeckSizeLimit"><div class="key"><strong>Cards:</strong></div><div class="value"></div></div>
