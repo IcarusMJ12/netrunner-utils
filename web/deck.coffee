@@ -39,7 +39,7 @@ class BaseDeck
             return
         if card.type is 'Identity'
             if @identity?
-                $(document).trigger('on_card_removed', card)
+                $(document).trigger('on_card_removed', @identity)
             @identity = card
             @faction = card.faction
             @removeInvalidAgendas()
