@@ -52,7 +52,7 @@ class BaseDeck
             @modified = true
             $(document).trigger('on_card_added', card)
             return
-        if not card.influence? and ((card.faction isnt @faction and card.faction isnt 'Neutral') or not @faction?)
+        if not card.influence? and @identity? and (card.faction isnt @faction and card.faction isnt 'Neutral')
             return
         if @cards[card.card_id]?
             if @cards[card.card_id] == 3
@@ -62,8 +62,11 @@ class BaseDeck
             @cards[card.card_id] = 1
         @size += 1
         if card.type is 'Agenda'
+            if not @identity? and card.faction isnt 'Neutral'
+                @faction = card.faction
+                @removeInvalidAgendas()
             @agenda_points += card.agenda_points
-        if card.faction isnt @faction and card.faction isnt 'Neutral'
+        if card.faction isnt @faction and card.faction isnt 'Neutral' and card.influence?
             @current_influence += card.influence
         @modified = true
         $(document).trigger('on_card_added', card)
@@ -71,13 +74,13 @@ class BaseDeck
     
     removeCard: (card) ->
         if card.side isnt @side
-            return false
-        if card.type is 'Identity' and card.card_id == @identity.card_id
-            if @identity?
+            return
+        if card.type is 'Identity'
+            if @identity? and card.card_id is @identity.card_id
                 @modified = true
-                $(document).trigger('on_card_removed', card)
                 @identity = undefined
                 @removeInvalidAgendas()
+                $(document).trigger('on_card_removed', card)
             return
         if not @cards[card.card_id]?
             return
@@ -91,7 +94,7 @@ class BaseDeck
         @size -= 1
         @modified = true
         $(document).trigger('on_card_removed', card)
-        return true
+        return
 
     clear: () ->
         @cards = {}
