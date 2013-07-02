@@ -23,7 +23,6 @@ class BaseDeck
         $(document).on('export_to_tsv', (side) => if side is @side then @exportToTSV())
         $(document).on('save_deck', (side, name) => if side is @side then @save(name))
         $(document).on('load_deck', (side, name) => if side is @side then @load(name))
-        @loadLastDeck()
     
     getIdentity: -> return if @identity? then '<strong>' + @identity.name + '</strong> (' + @faction + ')' else '??'
     getSize: -> return @size
@@ -159,13 +158,15 @@ class BaseDeck
         open("data:application/xml;charset=utf-8,#{encodeURIComponent(result)}")
     
     loadLastDeck: ->
-        return
+        name = localStorage["#{@side}:last_deck"]
+        if name?
+            @load(name)
 
     save: (name) ->
         key = "deck:#{name}"
         card_id = if @identity? then @identity.card_id else undefined
         localStorage[key] = JSON.stringify({cards: @cards, current_influence: @current_influence, identity: card_id, faction: @faction, size: @size, agenda_points: @agenda_points})
-        localStorage["#{@side}:last_deck"] = key
+        localStorage["#{@side}:last_deck"] = name
         decks_key = "#{@side}:decks"
         decks = localStorage[decks_key]
         if decks?

@@ -115,5 +115,6 @@ class DeckViewer
     for side in ['Corp', 'Runner']
         @decks[side] = @makeDeck(side)
         @deck_viewers.push(new DeckViewer(@decks[side], @card_types_order[side]))
+        @decks[side].loadLastDeck()
     @decks_viewer = new @DecksViewer()
     @switchToTab('Corp_tab')
