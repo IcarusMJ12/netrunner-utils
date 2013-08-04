@@ -7,6 +7,8 @@
         when 'Corp' then new CorpDeck(@cards)
         when 'Runner' then new RunnerDeck(@cards)
 
+limit_one_cards = ['03004'] #Director Haas' Pet Project
+
 class BaseDeck
     constructor: (cards) ->
         @all_cards = cards
@@ -48,14 +50,19 @@ class BaseDeck
             @identity = card
             @faction = card.faction
             @removeInvalidAgendas()
+            @removeInvalidCards()
             @recalculateInfluence()
             @modified = true
             $(document).trigger('on_card_added', card)
             return
         if not card.influence? and @identity? and (card.faction isnt @faction and card.faction isnt 'Neutral')
             return
+        if @identity? and @identity.card_id is '03002' and card.faction is 'Jinteki' #engineered for success
+            return
         if @cards[card.card_id]?
             if @cards[card.card_id] == 3
+                return
+            if card.card_id in limit_one_cards
                 return
             @cards[card.card_id] += 1
         else
@@ -66,8 +73,9 @@ class BaseDeck
                 @faction = card.faction
                 @removeInvalidAgendas()
             @agenda_points += card.agenda_points
-        if card.faction isnt @faction and card.faction isnt 'Neutral' and card.influence?
-            @current_influence += card.influence
+        if card.faction isnt @faction and card.influence?
+            if not (@identity? and @identity.card_id is '03029' and card.type is 'Program' and @cards[card.card_id] == 1) #the professor
+                @current_influence += card.influence
         @modified = true
         $(document).trigger('on_card_added', card)
         return
@@ -89,8 +97,9 @@ class BaseDeck
             delete @cards[card.card_id]
         if card.type is 'Agenda'
             @agenda_points -= card.agenda_points
-        if card.faction isnt @faction and card.faction isnt 'Neutral'
-            @current_influence -= card.influence
+        if card.faction isnt @faction and card.influence?
+            if not (@identity? and @identity.card_id is '03029' and card.type is 'Program' and @card[card.card_id] == 1) #the professor
+                @current_influence -= card.influence
         @size -= 1
         @modified = true
         $(document).trigger('on_card_removed', card)
@@ -115,8 +124,11 @@ class BaseDeck
         @current_influence = 0
         for card_id, card_count of @cards
             card = @all_cards[card_id]
-            if card.faction isnt @faction and card.faction isnt 'Neutral'
-                @current_influence += card.influence * card_count
+            if card.faction isnt @faction and card.influence?
+                if @identity? and @identity.card_id is '03029' and card.type is 'Program' #the professor
+                    @current_influence += card.influence * (card_count - 1)
+                else
+                    @current_influence += card.influence * card_count
     
     validateDeck: ->
         invalid_properties = []
@@ -230,6 +242,16 @@ class CorpDeck extends BaseDeck
                 @agenda_points -= card.agenda_points * card_count
                 delete @cards[card_id]
     
+    removeInvalidCards: ->
+        if @identity? and @identity.card_id is '03002' #engineered for success
+            for card_id, card_count of @cards
+                card = @all_cards[card_id]
+                if card.faction is 'Jinteki'
+                    @size -= card_count
+                    for i in [card_count-1..0]
+                        $(document).trigger('on_card_removed', card)
+                    delete @cards[card_id]
+    
     getAgendaPointLimit: ->
         return Math.floor(Math.max(@size, @getDeckSizeLimit())/5)*2 + 2
 
@@ -246,6 +268,9 @@ class RunnerDeck extends BaseDeck
         super cards
     
     removeInvalidAgendas: ->
+        return
+
+    removeInvalidCards: ->
         return
     
     validateDeck: ->
