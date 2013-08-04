@@ -23,6 +23,7 @@ class BaseDeck
         $(document).on('export_to_tsv', (side) => if side is @side then @exportToTSV())
         $(document).on('save_deck', (side, name) => if side is @side then @save(name))
         $(document).on('load_deck', (side, name) => if side is @side then @load(name))
+        $(document).on('delete_deck', (side, name) => if side is @side then @delete(name))
     
     getIdentity: -> return if @identity? then '<strong>' + @identity.name + '</strong> (' + @faction + ')' else '??'
     getSize: -> return @size
@@ -176,7 +177,7 @@ class BaseDeck
         decks[name] = true
         localStorage[decks_key] = JSON.stringify(decks)
         @modified = false
-        $(document).trigger('on_deck_saved', @side)
+        $(document).trigger('on_deck_saved', [@side, @faction, card_id, name])
 
     load: (name) ->
         key = "deck:#{name}"
@@ -193,6 +194,19 @@ class BaseDeck
             @agenda_points = data.agenda_points
             @modified = false
             $(document).trigger('on_deck_loaded', [@side, @cards, @identity, name])
+    
+    delete: (name) ->
+        key = "deck:#{name}"
+        decks_key = "#{@side}:decks"
+        decks = localStorage[decks_key]
+        decks = JSON.parse(decks)
+        delete decks[name]
+        localStorage[decks_key] = JSON.stringify(decks)
+        delete localStorage[key]
+        side_name = $("#{@side}_name")[0]
+        if side_name? and name is side_name.value
+            @modified = true
+        $(document).trigger('on_deck_deleted', [@side, name])
 
 class CorpDeck extends BaseDeck
     constructor: (cards) ->

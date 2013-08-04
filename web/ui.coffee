@@ -11,8 +11,7 @@ class DeckViewer
         $(document).on('on_deck_cleared', (side) => if side is @side then @onDeckCleared())
         $(document).on('on_card_added', (card) => if card.side is @side then @onCardAdded(card))
         $(document).on('on_card_removed', (card) => if card.side is @side then @onCardRemoved(card))
-        $(document).on('on_deck_saved', (side) => if side is @side then @onDeckSaved())
-        $(document).on('on_deck_loaded', (side, cards, identity, name) => if side is @side then @onDeckLoaded(name))
+        $(document).on('on_deck_saved', (side, faction, identity, name) => if side is @side then @onDeckSaved())
 
     makeDeckExpandedDiv: ->
         width = 80 / (@card_types.length - 1)
@@ -105,6 +104,7 @@ class DeckViewer
             tab.style.display = "none"
         else
             target_tab = tab
+    $(document).trigger('on_tab_switch', tab_id)
     target_tab.style.display = "inline"
 
 @initialize = () ->
