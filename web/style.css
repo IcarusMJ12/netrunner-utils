@@ -1,7 +1,7 @@
 /*@font-face {font-family: AnrSymbols; src: url(ANR_symbols_only-enlarged.ttf)}*/
 @font-face {font-family: AnrSymbols; src: url(anr.ttf)}
 
-body {color: white; background-color: black; -webkit-user-select: none; -moz-user-select: none; -khtml-user-select: none; -ms-user-select: none; font-family: AnrSymbols;}
+body {color: white; background-color: black; -webkit-user-select: none; -moz-user-select: none; -khtml-user-select: none; -ms-user-select: none; font-family: AnrSymbols; cursor: default;}
 
 .card {padding: 2px; box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box; position: relative; z-index: 0;}
 .card, .card_header, .card_center, .card_lower {float: left; width: 100%;}

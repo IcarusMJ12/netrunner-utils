@@ -12,6 +12,8 @@ symbols =
     subroutine: '&#57350;'
     link: '&#57351;'
 
+@symbols = symbols
+
 card_types_order =
     Corp: ["Identity", "Agenda", "Asset", "Upgrade", "ICE", "Operation"]
     Runner: ["Identity", "Event", "Program", "Hardware", "Resource"]
@@ -157,6 +159,7 @@ class BaseCard
     constructor: (keywords) ->
         @card_id = keywords['card_id']
         @card_text = keywords['card_text']
+        @card_text_formatted = @formatCardText(keywords['card_text'])
         @count = keywords['count']
         @faction = keywords['faction']
         @game_id = keywords['game_id']
@@ -173,8 +176,15 @@ class BaseCard
         @subtype = keywords['subtype']
         @short_name = @name.split(':')[if @side is 'Corp' and @type is 'Identity' then 1 else 0]
     
-    #formatCardText: (text) ->
-    #   return text.replace('[Click]', 
+    formatCardText: (text) ->
+        return text.replace(/\[Click\]/gi, window.symbols.click).
+            replace(/\[Credits\]/gi, window.symbols.credit).
+            replace(/\[Memory Unit\]/gi, window.symbols.one_mu).
+            replace(/\[Link\]/gi, window.symbols.link).
+            replace(/\[Trash\]/gi, window.symbols.trash).
+            replace(/\[Subroutine\]/gi, window.symbols.subroutine).
+            replace(/\r\n/g, '<br>')
+
     toDiv: ->
         maximum_index = if @type is 'Identity' then 0 else 2
         bar_width = 100 / (maximum_index + 1)
@@ -188,7 +198,7 @@ class BaseCard
                     </div>
                     <div class="card_stats">#{@getStats()}</div>
                 </div>
-                <div class="card_center">#{@card_text}</div>
+                <div class="card_center">#{@card_text_formatted}</div>
                 <div class="card_lower">#{if @flavor? then @flavor else '--'}</div>
             </div>
             #{("<div class=\"progress_bar\" style=\"width: #{bar_width}%;left: #{i*bar_width}%; display: none;\"></div>" for i in [0..maximum_index]).join('')}
