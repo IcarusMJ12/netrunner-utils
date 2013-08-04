@@ -1,6 +1,17 @@
 # cards indexed by card_id, i.e. serial number, which we will also use for card div ids
 @cards = {}
 
+symbols =
+    influence: '&#8226;'
+    credit: '&#57344;'
+    recurring_credit: '&#57345;'
+    one_mu: '&#57346;'
+    two_mu: '&#57347;'
+    click: '&#57348;'
+    trash: '&#57349;'
+    subroutine: '&#57350;'
+    link: '&#57351;'
+
 card_types_order =
     Corp: ["Identity", "Agenda", "Asset", "Upgrade", "ICE", "Operation"]
     Runner: ["Identity", "Event", "Program", "Hardware", "Resource"]
@@ -162,6 +173,8 @@ class BaseCard
         @subtype = keywords['subtype']
         @short_name = @name.split(':')[if @side is 'Corp' and @type is 'Identity' then 1 else 0]
     
+    #formatCardText: (text) ->
+    #   return text.replace('[Click]', 
     toDiv: ->
         maximum_index = if @type is 'Identity' then 0 else 2
         bar_width = 100 / (maximum_index + 1)
@@ -191,7 +204,7 @@ class ShareableCard extends BaseCard
         @influence = keywords['influence']
     
     getStats: ->
-        "#{@influence}&#8226;#{@cost}<"
+        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}"
 
 class TrashableCard extends ShareableCard
     constructor: (keywords) ->
@@ -199,7 +212,7 @@ class TrashableCard extends ShareableCard
         @trash_cost = keywords['trash_cost']
 
     getStats: ->
-        "#{@influence}&#8226;#{@cost}<#{if @trash_cost? then @trash_cost else '-'}]"
+        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}#{if @trash_cost? then @trash_cost else '-'}#{symbols.trash}"
 
 class AgendaCard extends BaseCard
     constructor: (keywords) ->
@@ -208,7 +221,7 @@ class AgendaCard extends BaseCard
         @agenda_points = keywords['agenda_points']
 
     getStats: ->
-        "#{@advancement_cost}<#{@agenda_points}A"
+        "#{@advancement_cost}#{symbols.credit}#{@agenda_points}A"
 
 class AssetCard extends TrashableCard
 
@@ -222,7 +235,7 @@ class ICECard extends ShareableCard
         @strength = keywords['strength']
 
     getStats: ->
-        "#{@influence}&#8226;#{@cost}<#{@strength}S"
+        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}#{@strength}S"
 
 class IdentityCard extends BaseCard
     constructor: (keywords) ->
@@ -232,7 +245,7 @@ class IdentityCard extends BaseCard
         @min_deck_size = keywords['min_deck_size']
 
     getStats: ->
-        "#{@influence_limit}&#8226;#{@min_deck_size}D#{if @base_link? then (@base_link + '~') else ''}"
+        "#{@influence_limit}#{symbols.influence}#{@min_deck_size}D#{if @base_link? then (@base_link + symbols.link) else ''}"
 
 class OperationCard extends ShareableCard
 
@@ -243,7 +256,7 @@ class ProgramCard extends ShareableCard
         @strength = keywords['strength']
 
     getStats: ->
-        "#{@influence}&#8226;#{@cost}<#{if @memory_cost is 2 then '#' else '@'} #{if @strength? then (@strength + 'S') else ''}"
+        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}#{if @memory_cost is 2 then symbols.two_mu else symbols.one_mu} #{if @strength? then (@strength + 'S') else ''}"
 
 class ResourceCard extends ShareableCard
 
