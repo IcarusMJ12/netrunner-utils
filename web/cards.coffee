@@ -179,6 +179,7 @@ class BaseCard
     formatCardText: (text) ->
         return text.replace(/\[Click\]/gi, window.symbols.click).
             replace(/\[Credits\]/gi, window.symbols.credit).
+            replace(/\[Recurring Credits\]/gi, window.symbols.recurring_credit).
             replace(/\[Memory Unit\]/gi, window.symbols.one_mu).
             replace(/\[Link\]/gi, window.symbols.link).
             replace(/\[Trash\]/gi, window.symbols.trash).
