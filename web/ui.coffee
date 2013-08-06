@@ -12,6 +12,7 @@ class DeckViewer
         $(document).on('on_card_added', (card) => if card.side is @side then @onCardAdded(card))
         $(document).on('on_card_removed', (card) => if card.side is @side then @onCardRemoved(card))
         $(document).on('on_deck_saved', (side, faction, identity, name) => if side is @side then @onDeckSaved())
+        $(document).on('on_deck_loaded', (side, cards, identity, name) => if side is @side then @onDeckLoaded(name))
 
     makeDeckExpandedDiv: ->
         width = 80 / (@card_types.length - 1)
