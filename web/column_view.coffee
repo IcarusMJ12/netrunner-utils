@@ -107,7 +107,7 @@ class @ColumnView
     
     goto: (col, entry, keys) ->
         console.log(entry)
-        col.children().each( (child, index) => child.className = 'columnview_entry clickable' )
+        col.children().each( (child, index) => $(child).removeClass('columnview_selected') )
         entry.addClass('columnview_selected')
         end = Math.min(keys.length, @current_path.length)
         common = 0
@@ -124,6 +124,6 @@ class @ColumnView
             for i in [common..keys.length-1]
                 console.log("+column " + keys[..i])
                 @_pushColumn(keys[..i])
-        @real_columns[@real_columns.length-1].children().each( (child, index) => child.className = 'columnview_entry clickable' )
+        @real_columns[@real_columns.length-1].children().each( (child, index) => $(child).removeClass('columnview_selected') )
         @_setColumnsWidth()
         @current_path = keys
