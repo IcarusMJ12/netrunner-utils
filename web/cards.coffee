@@ -193,11 +193,11 @@ class BaseCard
         <div class='card' id="#{@card_id}">
             <div style="position: relative; float: left; z-index: 10; width: 100%;">
                 <div class="card_header">
-                    <div class="card_leftside">
+                    <div class="card_leftside clickable">
                         <div class="card_name"#{if @is_unique then ' style="font-style: italic;"' else ''}>#{@short_name}</div>
                         <div class="card_subtype">#{if @subtype? then '('+@subtype+')' else ''}</div>
                     </div>
-                    <div class="card_stats">#{@getStats()}</div>
+                    <div class="card_stats clickable">#{@getStats()}</div>
                 </div>
                 <div class="card_center">#{@card_text_formatted}</div>
                 <div class="card_lower">#{if @flavor? then @flavor else '--'}</div>

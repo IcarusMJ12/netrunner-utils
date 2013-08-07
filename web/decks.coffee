@@ -27,8 +27,8 @@ class @DecksViewer
                     decks[side][faction][identity] = ''
                 decks[side][faction][identity] += """
                     <div id='deck_#{deck_name}' class='columnview_entry'>
-                        <div style='display: inline-block;' onclick='$(document).trigger(\"load_deck\", [\"#{side}\", \"#{deck_name}\"])'>#{deck_name}</div>
-                        <div style='display: inline-block;' onclick='$(document).trigger(\"delete_deck\", [\"#{side}\", \"#{deck_name}\"])'>&#9003;</div>
+                        <div class='clickable' style='display: inline-block;' onclick='$(document).trigger(\"load_deck\", [\"#{side}\", \"#{deck_name}\"])'>#{deck_name}</div>
+                        <div class='clickable' style='display: inline-block;' onclick='$(document).trigger(\"delete_deck\", [\"#{side}\", \"#{deck_name}\"])'>&#9003;</div>
                     </div>
                 """
         @cv.fill(decks)
