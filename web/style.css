@@ -32,8 +32,8 @@ table tr td:first-child, table tr th:first-child {border-left: 0;}
 table tr td:last-child, table tr th:last-child {border-right: 0;}
 
 #controls {width: 100%; color: black; background-color: black; font-weight: bold;}
-.control {float: left; border-style: solid; border-width: 2px; border-top: 0; border-bottom: 0; padding-left: 2px; padding-right: 2px; background-color: white; color: black;}
-.control_inverted {float: left; border-style: solid; border-width: 2px; border-top: 0; border-bottom: 0; padding-left: 2px; padding-right: 2px; background-color: black; color: white;}
+.control {float: left; border-top: 0; border-bottom: 0; padding-right: 2px; padding-left: 2px; margin-right: 4px; background-color: white; color: black;}
+.control_inverted {float: left; border-top: 0; border-bottom: 0; padding-right: 2px; padding-left: 2px; margin-right: 4px; background-color: black; color: white;}
 
 .tab {display: none;}
 #tabs {float: left;}

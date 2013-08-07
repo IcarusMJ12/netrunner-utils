@@ -1,5 +1,5 @@
 .columnview_container {position: relative; overflow: scroll; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;}
-.columnview_column {width: auto; height: 100%; background-color: black; display: inline-block; vertical-align: top; margin-right: 3px;}
+.columnview_column {width: auto; height: 100%; background-color: black; display: inline-block; vertical-align: top; margin-right: 3px; border: 2px solid white;}
 .columnview_columns {width: 5000px; height: 100%; background-color: black;}
 .columnview_entry {float: left; width: 100%;}
 .columnview_selected {background-color: white; color: black;}
