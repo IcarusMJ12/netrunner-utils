@@ -98,7 +98,7 @@ class BaseDeck
         if card.type is 'Agenda'
             @agenda_points -= card.agenda_points
         if card.faction isnt @faction and card.influence?
-            if not (@identity? and @identity.card_id is '03029' and card.type is 'Program' and @card[card.card_id] == 1) #the professor
+            if not (@identity? and @identity.card_id is '03029' and card.type is 'Program' and @cards[card.card_id] > 1) #the professor
                 @current_influence -= card.influence
         @size -= 1
         @modified = true
