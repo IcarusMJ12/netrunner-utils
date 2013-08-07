@@ -33,11 +33,10 @@ table tr td:last-child, table tr th:last-child {border-right: 0;}
 
 #controls {width: 100%; color: black; background-color: black; font-weight: bold;}
 .control {float: left; border-style: solid; border-width: 2px; border-top: 0; border-bottom: 0; padding-left: 2px; padding-right: 2px; background-color: white; color: black;}
+.control_inverted {float: left; border-style: solid; border-width: 2px; border-top: 0; border-bottom: 0; padding-left: 2px; padding-right: 2px; background-color: black; color: white;}
 
 .tab {display: none;}
 #tabs {float: left;}
-
-.deck_list_item {margin-left: 20px;}
 
 .haas-bioroid {background-color: #220055} /*'#6600FF'*/
 .jinteki {background-color: #3E0B0B} /*'#BB2222'*/

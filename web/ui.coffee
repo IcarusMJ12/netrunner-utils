@@ -31,10 +31,10 @@ class DeckViewer
         expanded_html += "</table>\n"
         expanded_html += "</div>\n"
         expanded_html += "<div style='float: right;'>\n"
-        expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('export_to_o8d', '#{@side}');\">Export (o8d)</div>\n"
-        expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('export_to_tsv', '#{@side}');\">Export (tsv)</div>\n"
-        expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('save_deck', ['#{@side}', $('##{@side}_name')[0].value]);\">Save</div>\n"
-        expanded_html += "<div class='control' style='width:100%'; onclick=\"$(document).trigger('clear_deck', '#{@side}');\">Clear</div>\n"
+        expanded_html += "<div class='control_inverted clickable' style='width:100%'; onclick=\"$(document).trigger('export_to_o8d', '#{@side}');\">Export (o8d)</div>\n"
+        expanded_html += "<div class='control_inverted clickable' style='width:100%'; onclick=\"$(document).trigger('export_to_tsv', '#{@side}');\">Export (tsv)</div>\n"
+        expanded_html += "<div class='control_inverted clickable' style='width:100%'; onclick=\"$(document).trigger('save_deck', ['#{@side}', $('##{@side}_name')[0].value]);\">Save</div>\n"
+        expanded_html += "<div class='control_inverted clickable' style='width:100%'; onclick=\"$(document).trigger('clear_deck', '#{@side}');\">Clear</div>\n"
         expanded_html += "</div>\n"
         @expanded.innerHTML = expanded_html
 
