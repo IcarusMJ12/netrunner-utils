@@ -35,10 +35,12 @@ class BaseDeck
     getOrderedDivsByType: (type) ->
         result =[]
         for card_id, count of @cards
-            if @all_cards[card_id].type is type
-                result.push([@all_cards[card_id].name, count])
+            card = @all_cards[card_id]
+            if card.type is type
+                faction_class_name = card.faction.toLowerCase().replace(' ', '_')
+                result.push([card.name, count, faction_class_name])
         result.sort( (a, b) -> if a[0].toLowerCase() > b[0].toLowerCase() then 1 else -1)
-        return ("<div style=\"width: 100%; float: left;\">#{i[1] + ' ' + i[0]}</div>" for i in result).join('\n')
+        return ("<div class=\"#{i[2]}\" style=\"width: 100%; float: left;\">#{i[1] + ' ' + i[0]}</div>" for i in result).join('\n')
 
     addCard: (card) ->
         if card.side isnt @side
