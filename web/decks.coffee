@@ -11,6 +11,7 @@ class @DecksViewer
         if not @_is_dirty
             return
         decks = { Corp: {}, Runner: {} }
+        path = @cv.current_path
         for side in $.keys(decks)
             deck_keys = localStorage["#{side}:decks"]
             if deck_keys?
@@ -27,9 +28,20 @@ class @DecksViewer
                     decks[side][faction][identity] = ''
                 decks[side][faction][identity] += """
                     <div id='deck_#{deck_name}' class='columnview_entry'>
-                        <div class='clickable' style='display: inline-block;' onclick='$(document).trigger(\"load_deck\", [\"#{side}\", \"#{deck_name}\"])'>#{deck_name}</div>
-                        <div class='clickable' style='display: inline-block;' onclick='$(document).trigger(\"delete_deck\", [\"#{side}\", \"#{deck_name}\"])'>&#9003;</div>
+                        <div class='clickable' style='display: inline-block;' onclick='$(document).trigger(\"load_deck\", ["#{side}", "#{deck_name}"]); switchToTab("#{side}_tab")'>#{deck_name}</div>
+                        <div class='clickable' style='display: inline-block;' onclick='$(document).trigger("delete_deck", ["#{side}", "#{deck_name}"])'>&#9003;</div>
                     </div>
                 """
         @cv.fill(decks)
         @_is_dirty = false
+        for index in [0..path.length-1]
+            key = path[index]
+            col = @cv.real_columns[@cv.real_columns.length-1]
+            entry = undefined
+            for e in col.children()
+                if e.innerHTML is key
+                    entry = $(e)
+                    break
+            if not entry?
+                break
+            @cv.goto(col, entry, path[0..index])

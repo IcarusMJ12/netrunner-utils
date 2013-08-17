@@ -48,7 +48,6 @@ class SortedObjectTree
             node.remove(keys[0])
     
     get: (keys, node=@root) ->
-        console.log('keys: ' + keys + ' node: ' + node)
         if keys.length is 0
             if node instanceof SortedObject
                 return node.keys
@@ -69,7 +68,6 @@ class @ColumnView
         col.addClass('columnview_column')
         col[0].style.display = 'none'
         values = @data.get(path)
-        console.log(values)
         if values instanceof Array
             for value in values
                 entry = $.create('<div>')
@@ -106,7 +104,6 @@ class @ColumnView
         @_setColumnsWidth()
     
     goto: (col, entry, keys) ->
-        console.log(entry)
         col.children().each( (child, index) => $(child).removeClass('columnview_selected') )
         entry.addClass('columnview_selected')
         end = Math.min(keys.length, @current_path.length)
@@ -115,14 +112,11 @@ class @ColumnView
             if keys[common] isnt @current_path[common]
                 break
             common += 1
-        console.log(keys + ' ' + @current_path + ' ' + common)
         popped = false
         for key in @current_path[common..@current_path.length-1]
-            console.log("-column")
             @_popColumn()
         if keys.length > common
             for i in [common..keys.length-1]
-                console.log("+column " + keys[..i])
                 @_pushColumn(keys[..i])
         @real_columns[@real_columns.length-1].children().each( (child, index) => $(child).removeClass('columnview_selected') )
         @_setColumnsWidth()
