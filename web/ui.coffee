@@ -121,4 +121,5 @@ class DeckViewer
         @deck_viewers.push(new DeckViewer(@decks[side], @card_types_order[side]))
         @decks[side].loadLastDeck()
     @decks_viewer = new @DecksViewer()
+    @settings = new @SettingsManager()
     @switchToTab('Corp_tab')

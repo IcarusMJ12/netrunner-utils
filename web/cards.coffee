@@ -165,6 +165,7 @@ class BaseCard
         @faction = keywords['faction']
         @game_id = keywords['game_id']
         @id = keywords['id']
+        @id_set = keywords['id_set']
         @is_unique = keywords['is_unique']
         @name = keywords['name']
         @rulings = keywords['rulings']
@@ -274,7 +275,5 @@ class ResourceCard extends ShareableCard
 
 class UpgradeCard extends TrashableCard
 
-#TODO: this filter needs to be a feature of CardViewer
-#for card in raw_card_data["cards"] when card["game_id"]?
 for card in raw_card_data["cards"]
     @cards[card["card_id"]] = makeCard(card)

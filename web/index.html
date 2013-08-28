@@ -10,6 +10,7 @@
 		<script src="raw_data.js"></script>
 		<script src="column_view.js"></script>
 		<script src="cards.js"></script>
+		<script src="settings.js"></script>
 		<script src="deck.js"></script>
 		<script src="decks.js"></script>
 		<script src="ui.js"></script>
@@ -19,6 +20,8 @@
 			<div class="control clickable" onclick="switchToTab('Corp_tab')">Corp</div>
 			<div class="control clickable" onclick="switchToTab('Runner_tab')">Runner</div>
 			<div class="control clickable" onclick="switchToTab('Decks_tab')">Decks</div>
+			<div class="control clickable" onclick="switchToTab('Settings_tab')">Settings</div>
+			<div class="control clickable" onclick="switchToTab('Help_tab')">Help</div>
 			<div style="clear: both;"></div>
 		</div>
 		<div id="tabs">
@@ -63,6 +66,14 @@
 				</div>
 			</div>
 			<div id="Decks_tab" class="tab">
+			</div>
+			<div id="Settings_tab" class="tab">
+			</div>
+			<div id="Help_tab" class="tab">
+				<p>Click on a card name to add it to your deck.  Right-click to remove.</p>
+				<p>Click on the card stats to the right of the card name to view additional card metadata.  Right-click to collapse.</p>
+				<p>Click on the white deck bar (which appears when any card is added) for expanded deck view that contains additional options.  Click again to collapse.</p>
+				<p>Any clickable item will become translucent on mouseover.  Don't be afraid to experiment!</p>
 			</div>
 		</div>
 	</body>
