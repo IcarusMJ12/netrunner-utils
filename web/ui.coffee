@@ -45,7 +45,10 @@ class DeckViewer
         @updateDeckDiv()
         for type in @card_types
             if type isnt "Identity"
-                $("##{@side}_#{type}")[0].innerHTML = @deck.getOrderedDivsByType(type)
+                parent = $("##{@side}_#{type}")
+                parent.empty()
+                for div in @deck.getOrderedDivsByType(type)
+                    parent.append(div[0])
         @padding.style.height = @deck_div.offsetHeight + 'px'
         @deck_div.style.display = "inline"
         @name.value = name
@@ -82,7 +85,10 @@ class DeckViewer
         console.log("+"+card.name)
         @updateDeckDiv()
         if card.type isnt 'Identity'
-            $("##{@side}_#{card.type}")[0].innerHTML = @deck.getOrderedDivsByType(card.type)
+            parent = $("##{@side}_#{card.type}")
+            parent.empty()
+            for div in @deck.getOrderedDivsByType(card.type)
+                parent.append(div[0])
         @padding.style.height = @deck_div.offsetHeight + 'px'
         @deck_div.style.display = "inline"
 
@@ -95,7 +101,10 @@ class DeckViewer
             @padding.style.height = 0
             return
         if card.type isnt 'Identity'
-            $("##{@side}_#{card.type}")[0].innerHTML = @deck.getOrderedDivsByType(card.type)
+            parent = $("##{@side}_#{card.type}")
+            parent.empty()
+            for div in @deck.getOrderedDivsByType(card.type)
+                parent.append(div[0])
         @padding.style.height = @deck_div.offsetHeight + 'px'
 
 @switchToTab = (tab_id) ->

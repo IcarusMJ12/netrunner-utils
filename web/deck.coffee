@@ -32,15 +32,42 @@ class BaseDeck
     getInfluence: -> return @current_influence
     isModified: -> return if @modified then '*' else ''
 
+    #TODO: this is likely inefficient, but let's not suffer from premature
+    #optimization, esp. for ~49 card decks
     getOrderedDivsByType: (type) ->
-        result =[]
+        result = []
         for card_id, count of @cards
             card = @all_cards[card_id]
             if card.type is type
-                faction_class_name = card.faction.toLowerCase().replace(' ', '_')
-                result.push([card.name, count, faction_class_name])
-        result.sort( (a, b) -> if a[0].toLowerCase() > b[0].toLowerCase() then 1 else -1)
-        return ("<div class=\"#{i[2]}\" style=\"width: 100%; float: left;\">#{i[1] + ' ' + i[0]}</div>" for i in result).join('\n')
+                elem = $.create('<div>')
+                elem[0].style.width = '100%'
+                elem[0].style.position = 'relative'
+                elem[0].style.zIndex = 0
+                elem.name = card.name
+                name = $.create('<div>').addClass('card_header').addClass('clickable')
+                name[0].style.zIndex = 10
+                name[0].style.width = '100%'
+                name[0].style.position = 'relative'
+                name[0].style.float = 'left'
+                name[0].innerHTML = card.name
+                name[0].onclick = do (card) ->
+                    () => $(document).trigger('add_to_deck', card)
+                name[0].oncontextmenu = do (card) ->
+                    () => $(document).trigger('remove_from_deck', card); return false
+                elem.append(name)
+                bar = $.create('<div>').addClass('progress_bar')
+                bar.addClass(card.faction.toLowerCase().replace(' ', '_'))
+                bar[0].style.width = (100 / 3 * count) + '%'
+                bar[0].style.left = 0
+                bar[0].style.zIndex = 5
+                bar[0].style.display = "inline"
+                elem.append(bar)
+                clear = $.create('<div>')
+                clear[0].style.clear = 'both'
+                elem.append(clear)
+                result.push(elem)
+        result.sort( (a, b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1)
+        return result
 
     addCard: (card) ->
         if card.side isnt @side
