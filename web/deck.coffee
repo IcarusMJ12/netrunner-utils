@@ -34,11 +34,14 @@ class BaseDeck
 
     #TODO: this is likely inefficient, but let's not suffer from premature
     #optimization, esp. for ~49 card decks
-    getOrderedDivsByType: (type) ->
+    fillOrderedDivsByType: (type, parent) ->
+        parent.empty()
         result = []
+        total_count = 0
         for card_id, count of @cards
             card = @all_cards[card_id]
             if card.type is type
+                total_count += count
                 elem = $.create('<div>')
                 elem[0].style.width = '100%'
                 elem[0].style.position = 'relative'
@@ -67,7 +70,9 @@ class BaseDeck
                 elem.append(clear)
                 result.push(elem)
         result.sort( (a, b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1)
-        return result
+        for div in result
+            parent.append(div[0])
+        return total_count
 
     addCard: (card) ->
         if card.side isnt @side

@@ -21,7 +21,7 @@ class DeckViewer
         expanded_html += "<tr class=\"card_list\">\n"
         for card_type in @card_types
             if card_type isnt 'Identity'
-                expanded_html += "<th class=\"card_list\" style='width: #{width}%'>#{card_type}</th>\n"
+                expanded_html += "<th class=\"card_list\" style='width: #{width}%'><div id=\"#{@side + '_' + card_type + '_count'}\" style='float: left;'>0x</div><div style='float: left; padding-left: 4px;'>#{card_type}</div></th>\n"
         expanded_html += "</tr>\n"
         expanded_html += "<tr class=\"card_list\">\n"
         for card_type in @card_types
@@ -45,12 +45,10 @@ class DeckViewer
         @updateDeckDiv()
         for type in @card_types
             if type isnt "Identity"
-                parent = $("##{@side}_#{type}")
-                parent.empty()
-                for div in @deck.getOrderedDivsByType(type)
-                    parent.append(div[0])
-        @padding.style.height = @deck_div.offsetHeight + 'px'
+                count = @deck.fillOrderedDivsByType(type, $("##{@side}_#{type}"))
+                $("##{@side}_#{type}_count")[0].innerHTML = count + 'x'
         @deck_div.style.display = "inline"
+        @padding.style.height = @deck_div.offsetHeight + 'px'
         @name.value = name
 
     onDeckCleared: ->
@@ -85,10 +83,8 @@ class DeckViewer
         console.log("+"+card.name)
         @updateDeckDiv()
         if card.type isnt 'Identity'
-            parent = $("##{@side}_#{card.type}")
-            parent.empty()
-            for div in @deck.getOrderedDivsByType(card.type)
-                parent.append(div[0])
+            count = @deck.fillOrderedDivsByType(card.type, $("##{@side}_#{card.type}"))
+            $("##{@side}_#{card.type}_count")[0].innerHTML = count + 'x'
         @padding.style.height = @deck_div.offsetHeight + 'px'
         @deck_div.style.display = "inline"
 
@@ -101,10 +97,8 @@ class DeckViewer
             @padding.style.height = 0
             return
         if card.type isnt 'Identity'
-            parent = $("##{@side}_#{card.type}")
-            parent.empty()
-            for div in @deck.getOrderedDivsByType(card.type)
-                parent.append(div[0])
+            count = @deck.fillOrderedDivsByType(card.type, $("##{@side}_#{card.type}"))
+            $("##{@side}_#{card.type}_count")[0].innerHTML = count + 'x'
         @padding.style.height = @deck_div.offsetHeight + 'px'
 
 @switchToTab = (tab_id) ->
