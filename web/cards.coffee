@@ -11,6 +11,7 @@ symbols =
     trash: '&#57349;'
     subroutine: '&#57350;'
     link: '&#57351;'
+    strength: '&#9889;'
 
 @symbols = symbols
 
@@ -246,7 +247,7 @@ class ICECard extends ShareableCard
         @strength = keywords['strength']
 
     getStats: ->
-        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}#{@strength}S"
+        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}#{@strength}#{symbols.strength}"
 
 class IdentityCard extends BaseCard
     constructor: (keywords) ->
@@ -256,7 +257,7 @@ class IdentityCard extends BaseCard
         @min_deck_size = keywords['min_deck_size']
 
     getStats: ->
-        "#{@influence_limit}#{symbols.influence}#{@min_deck_size}D#{if @base_link? then (@base_link + symbols.link) else ''}"
+        "#{@influence_limit}#{symbols.influence}#{@min_deck_size}##{if @base_link? then (@base_link + symbols.link) else ''}"
 
 class OperationCard extends ShareableCard
 
@@ -267,7 +268,7 @@ class ProgramCard extends ShareableCard
         @strength = keywords['strength']
 
     getStats: ->
-        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}#{if @memory_cost is 2 then symbols.two_mu else symbols.one_mu} #{if @strength? then (@strength + 'S') else ''}"
+        "#{@influence}#{symbols.influence}#{@cost}#{symbols.credit}#{if @memory_cost is 2 then symbols.two_mu else symbols.one_mu} #{if @strength? then (@strength + symbols.strength) else ''}"
 
 class ResourceCard extends ShareableCard
 
