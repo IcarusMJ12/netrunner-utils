@@ -91,7 +91,7 @@ def main():
 
     for card in cards:
         renameCardKeys(card)
-        print card['name']
+        print card['name'].encode('utf8')
         try:
             key = [k for k in card_octgn_data.keys() if k.endswith(card['card_id'])][0]
         except IndexError as e:

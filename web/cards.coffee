@@ -165,7 +165,7 @@ class BaseCard
         @faction = keywords['faction']
         @game_id = keywords['game_id']
         @id = keywords['id']
-        @id_set = keywords['id_set']
+        @setcode = keywords['setcode']
         @is_unique = keywords['is_unique']
         @name = keywords['name']
         @rulings = keywords['rulings']

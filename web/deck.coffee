@@ -127,13 +127,13 @@ class BaseDeck
         if not @cards[card.card_id]?
             return
         @cards[card.card_id] -= 1
-        if @cards[card.card_id] == 0
-            delete @cards[card.card_id]
         if card.type is 'Agenda'
             @agenda_points -= card.agenda_points
         if card.faction isnt @faction and card.influence?
-            if not (@identity? and @identity.card_id is '03029' and card.type is 'Program' and @cards[card.card_id] > 1) #the professor
+            if not (@identity? and @identity.card_id is '03029' and card.type is 'Program' and @cards[card.card_id] == 0) #the professor
                 @current_influence -= card.influence
+        if @cards[card.card_id] == 0
+            delete @cards[card.card_id]
         @size -= 1
         @modified = true
         $(document).trigger('on_card_removed', card)

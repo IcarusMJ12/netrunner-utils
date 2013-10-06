@@ -1,8 +1,9 @@
 This is an online deck builder for Android: Netrunner
+requires python 2.7, and the Ender javascript "no-library library"
 
 To prepare dependencies, you need to run:
 	pushd ../
-	fetch_cards.py <octn_anr_plugin_repo_path> <data_path>
-	generate_cards_json.py <data_path> web/cards.js
+	./fetch_cards.py <octn_anr_plugin_absolute_repo_path> <data_path>
+	./generate_cards_json.py <data_path> web/raw_data.js
 	popd
-	ender build qwery-mobile bean underscore
+	ender build qwery-mobile bean bonzo underscore
