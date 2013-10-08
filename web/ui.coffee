@@ -114,7 +114,7 @@ class DeckViewer
 @initialize = () ->
     @card_viewer = new @CardViewer(@cards)
     # by default exclude cards from unreleased sets, thus not on octgn
-    $(document).trigger('filter_cards', (c) -> c["game_id"]?)
+    $(document).trigger('filter_cards', (c) -> c["game_id"]? and c["setcode"] isnt "promos")
     @deck_viewers = [] #should never be accessed, but paranoidly putting them here so they don't get garbage-collected
     for side in ['Corp', 'Runner']
         @decks[side] = @makeDeck(side)
