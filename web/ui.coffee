@@ -13,6 +13,7 @@ class DeckViewer
         $(document).on('on_card_removed', (card) => if card.side is @side then @onCardRemoved(card))
         $(document).on('on_deck_saved', (side, faction, identity, name) => if side is @side then @onDeckSaved())
         $(document).on('on_deck_loaded', (side, cards, identity, name) => if side is @side then @onDeckLoaded(name))
+        $(document).on('on_tab_switch', (tab_id) => if tab_id is @side + '_tab' then @onTabSwitch())
 
     makeDeckExpandedDiv: ->
         width = 80 / (@card_types.length - 1)
@@ -47,7 +48,7 @@ class DeckViewer
             if type isnt "Identity"
                 count = @deck.fillOrderedDivsByType(type, $("##{@side}_#{type}"))
                 $("##{@side}_#{type}_count")[0].innerHTML = count + 'x'
-        @deck_div.style.display = "inline"
+        @deck_div.style.display = 'inline'
         @padding.style.height = @deck_div.offsetHeight + 'px'
         @name.value = name
 
@@ -60,10 +61,8 @@ class DeckViewer
 
     toggleDeckView: ->
         if @expanded.style.display is 'inline'
-            console.log('-visible')
             @expanded.style.display = 'none'
         else
-            console.log('+visible')
             @expanded.style.display = 'inline'
         @padding.style.height = @deck_div.offsetHeight + 'px'
 
@@ -85,8 +84,8 @@ class DeckViewer
         if card.type isnt 'Identity'
             count = @deck.fillOrderedDivsByType(card.type, $("##{@side}_#{card.type}"))
             $("##{@side}_#{card.type}_count")[0].innerHTML = count + 'x'
-        @padding.style.height = @deck_div.offsetHeight + 'px'
         @deck_div.style.display = "inline"
+        @padding.style.height = @deck_div.offsetHeight + 'px'
 
     onCardRemoved: (card) ->
         console.log("-"+card.name)
@@ -100,6 +99,9 @@ class DeckViewer
             count = @deck.fillOrderedDivsByType(card.type, $("##{@side}_#{card.type}"))
             $("##{@side}_#{card.type}_count")[0].innerHTML = count + 'x'
         @padding.style.height = @deck_div.offsetHeight + 'px'
+    
+    onTabSwitch: () ->
+        @padding.style.height = @deck_div.offsetHeight + 'px'
 
 @switchToTab = (tab_id) ->
     target_tab = undefined
@@ -108,13 +110,11 @@ class DeckViewer
             tab.style.display = "none"
         else
             target_tab = tab
-    $(document).trigger('on_tab_switch', tab_id)
     target_tab.style.display = "inline"
+    $(document).trigger('on_tab_switch', tab_id)
 
 @initialize = () ->
     @card_viewer = new @CardViewer(@cards)
-    # by default exclude cards from unreleased sets, thus not on octgn
-    $(document).trigger('filter_cards', (c) -> c["game_id"]? and c["setcode"] isnt "promos")
     @deck_viewers = [] #should never be accessed, but paranoidly putting them here so they don't get garbage-collected
     for side in ['Corp', 'Runner']
         @decks[side] = @makeDeck(side)
