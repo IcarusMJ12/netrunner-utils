@@ -32,8 +32,8 @@ class BaseDeck
         $(document).on('add_to_deck', (card) => @addCard(card))
         $(document).on('remove_from_deck', (card) => @removeCard(card))
         $(document).on('clear_deck', (side) => if side is @side then @clear())
-        $(document).on('export_to_o8d', (side) => if side is @side then @exportToO8D())
-        $(document).on('export_to_tsv', (side) => if side is @side then @exportToTSV())
+        $(document).on('export_to_o8d', (side, name) => if side is @side then @exportToO8D(name))
+        $(document).on('export_to_tsv', (side, name) => if side is @side then @exportToTSV(name))
         $(document).on('save_deck', (side, name) => if side is @side then @save(name))
         $(document).on('load_deck', (side, name) => if side is @side then @load(name))
         $(document).on('delete_deck', (side, name) => if side is @side then @delete(name))
@@ -190,7 +190,7 @@ class BaseDeck
         card = @all_cards[card_id]
         return "<card qty=\"#{@cards[card_id]}\" id=\"#{card.id}\">#{$.escape(card.name)}</card>\n"
 
-    exportToTSV: ->
+    exportToTSV: (name) ->
         result = '#\tcard_id\tname\n'
         if @identity?
             result += "#\t\t#{@identity.type}\n"
@@ -204,9 +204,14 @@ class BaseDeck
                 result += "#\n"
                 result += "#\t\t#{last_type}\n"
             result += "#{i[0]}\t#{i[1].card_id}\t#{$.escape(i[1].name)}\n"
-        open("data:text/plain;charset=utf-8,#{encodeURIComponent(result)}")
+        b = new Blob([result], {"data:text/plain;charset=utf-8"})
+        faction = if @faction? then @faction else '???'
+        identity = if @identity? then @identity.short_name else '???'
+        full_name = [faction, identity, name]
+        full_name = full_name.join(' - ') + '.tsv'
+        saveAs(b, full_name)
 
-    exportToO8D: ->
+    exportToO8D: (name) ->
         for card_id, count of @cards
             game_id = @all_cards[card_id].game_id
             break
@@ -220,7 +225,12 @@ class BaseDeck
         result += (@makeOctgnCard(card_id) for card_id, count of @cards).join('')
         result += "</section>\n"
         result += "</deck>\n"
-        open("data:application/xml;charset=utf-8,#{encodeURIComponent(result)}")
+        b = new Blob([result], {"data:application/xml;charset=utf-8"})
+        faction = if @faction? then @faction else '???'
+        identity = if @identity? then @identity.short_name else '???'
+        full_name = [faction, identity, name]
+        full_name = full_name.join(' - ') + '.o8d'
+        saveAs(b, full_name)
     
     loadLastDeck: ->
         name = localStorage["#{@side}:last_deck"]
