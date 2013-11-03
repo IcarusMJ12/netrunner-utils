@@ -7,6 +7,17 @@
         when 'Corp' then new CorpDeck(@cards)
         when 'Runner' then new RunnerDeck(@cards)
 
+sort_cards_tsv_f = (a, b) ->
+    a_rank = $.indexOf(window.card_types_order[a[1].side], a[1].type)
+    b_rank = $.indexOf(window.card_types_order[b[1].side], b[1].type)
+    if a_rank > b_rank
+        return 1
+    if a_rank < b_rank
+        return -1
+    if a[1].name.toLowerCase() > b[1].name.toLowerCase()
+        return 1
+    return -1
+
 limit_one_cards = ['03004'] #Director Haas' Pet Project
 
 class BaseDeck
@@ -47,6 +58,7 @@ class BaseDeck
                 elem[0].style.position = 'relative'
                 elem[0].style.zIndex = 0
                 elem.name = card.name
+                elem.subtype = card.subtype
                 name = $.create('<div>').addClass('card_header').addClass('clickable')
                 name[0].style.zIndex = 10
                 name[0].style.width = '100%'
@@ -179,13 +191,19 @@ class BaseDeck
         return "<card qty=\"#{@cards[card_id]}\" id=\"#{card.id}\">#{$.escape(card.name)}</card>\n"
 
     exportToTSV: ->
-        result = ''
+        result = '#\tcard_id\tname\n'
         if @identity?
+            result += "#\t\t#{@identity.type}\n"
             result += "1\t#{@identity.card_id}\t#{$.escape(@identity.name)}\n"
-        result += '#\tcard_id\tname\n'
-        sorted_cards = ([count, card_id, $.escape(@all_cards[card_id].name)] for card_id, count of @cards)
-        sorted_cards.sort( (a, b) -> if a[2].toLowerCase() > b[2].toLowerCase() then 1 else -1)
-        result += ("#{i[0]}\t#{i[1]}\t#{i[2]}" for i in sorted_cards).join('\n')
+        sorted_cards = ([count, @all_cards[card_id]] for card_id, count of @cards)
+        sorted_cards.sort(sort_cards_tsv_f)
+        last_type = ''
+        for i in sorted_cards
+            if i[1].type isnt last_type
+                last_type = i[1].type
+                result += "#\n"
+                result += "#\t\t#{last_type}\n"
+            result += "#{i[0]}\t#{i[1].card_id}\t#{$.escape(i[1].name)}\n"
         open("data:text/plain;charset=utf-8,#{encodeURIComponent(result)}")
 
     exportToO8D: ->
