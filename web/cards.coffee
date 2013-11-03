@@ -1,6 +1,19 @@
 # cards indexed by card_id, i.e. serial number, which we will also use for card div ids
 @cards = {}
 
+card_sort_f = (a, b) ->
+    a_subtype = if a.subtype? then a.subtype.toLowerCase() else '~~~~'
+    b_subtype = if b.subtype? then b.subtype.toLowerCase() else '~~~~'
+    if a_subtype > b_subtype
+        return 1
+    if a_subtype < b_subtype
+        return -1
+    if a.name.toLowerCase() > b.name.toLowerCase()
+        return 1
+    return -1
+
+@card_sort_f = card_sort_f
+
 symbols =
     influence: '&#8226;'
     credit: '&#57344;'
@@ -43,7 +56,7 @@ class @CardViewer
         @cards = {}
         @viewers = {}
         card_array = (card for k, card of cards)
-        card_array.sort( (a, b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1 )
+        card_array.sort(card_sort_f)
         for card in card_array
             [side, faction, type] = [card['side'], card['faction'], card['type']]
             if not @cards[side]?

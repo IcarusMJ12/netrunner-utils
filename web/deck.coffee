@@ -69,7 +69,7 @@ class BaseDeck
                 clear[0].style.clear = 'both'
                 elem.append(clear)
                 result.push(elem)
-        result.sort( (a, b) -> if a.name.toLowerCase() > b.name.toLowerCase() then 1 else -1)
+        result.sort( window.card_sort_f )
         for div in result
             parent.append(div[0])
         return total_count
