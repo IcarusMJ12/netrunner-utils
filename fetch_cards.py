@@ -17,11 +17,11 @@ from git.repo import Repo
 
 from card_set import octgnSetToDict
 
-NETRUNNERCARDS_BASE = 'http://netrunnercards.info'
-NETRUNNERCARDS_URL = 'http://netrunnercards.info/api/search/d:r|c'
+NETRUNNERCARDS_BASE = 'http://netrunnerdb.com'
+NETRUNNERCARDS_URL = 'http://netrunnerdb.com/api/search/d:r|c'
 
 _keyname_transform_map = {
-        "indexkey": "card_id",
+        "code": "card_id",
         "setname": "set_name",
         "title": "name",
         "text": "card_text",
@@ -103,8 +103,12 @@ def main():
         card['id'] = octgn_card['id']
         card_image_path = join(args.cards_path, split(card['imagesrc'])[-1])
         if not exists(card_image_path):
-            with open(card_image_path, 'w') as f:
-                f.write(urlopen(NETRUNNERCARDS_BASE + card['imagesrc']).read())
+            try:
+                image_src = urlopen(NETRUNNERCARDS_BASE + card['imagesrc']) 
+                with open(card_image_path, 'w') as f:
+                    f.write(image_src.read())
+            except HTTPError as e:
+                print 'ERROR: image missing for card #', card['id']
     cards = {'modified_since': now, 'octgn_sha': octgn_sha, 'cards': cards}
     with open(join(args.cards_path, 'cards.json'), 'w') as f:
         json_dump(cards, f)
