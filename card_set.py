@@ -20,8 +20,11 @@ def octgnSetToDict(f):
     for card in doc.getElementsByTagName('card'):
         attributes = dict(card.attributes.items())
         properties = dict([(prop.attributes['name'].value.lower(), prop.attributes['value'].value) for prop in card.getElementsByTagName('property')])
-        cards[attributes['id']] = properties
-        cards[attributes['id']]['name'] = attributes['name']
+        # last 5 elements of the card's OCTGN id actually comprise the ANR card id
+        card_id = attributes['id'][-5:]
+        cards[card_id] = properties
+        cards[card_id]['name'] = attributes['name']
+        cards[card_id]['id'] = attributes['id']
     
     return result
 

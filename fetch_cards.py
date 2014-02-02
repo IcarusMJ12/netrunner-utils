@@ -86,18 +86,17 @@ def main():
             for card_id, card in set_data['cards'].items():
                 card['set_id'] = set_data['id']
                 card['game_id'] = set_data['gameid']
-                card['id'] = card_id
             card_octgn_data.update(set_data['cards'])
 
     for card in cards:
         renameCardKeys(card)
         print card['name'].encode('utf8')
+        octgn_card = None
         try:
-            key = [k for k in card_octgn_data.keys() if k.endswith(card['card_id'])][0]
-        except IndexError as e:
+            octgn_card = card_octgn_data[card['card_id']]
+        except KeyError as e:
             print '', card['set_name']
             continue
-        octgn_card = card_octgn_data[key]
         card['set_id'] = octgn_card['set_id']
         card['game_id'] = octgn_card['game_id']
         card['id'] = octgn_card['id']
