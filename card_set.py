@@ -21,7 +21,7 @@ def octgnSetToDict(f):
         attributes = dict(card.attributes.items())
         properties = dict([(prop.attributes['name'].value.lower(), prop.attributes['value'].value) for prop in card.getElementsByTagName('property')])
         # last 5 elements of the card's OCTGN id actually comprise the ANR card id
-        card_id = attributes['id'][-5:]
+        card_id = str(attributes['id'][-5:])
         cards[card_id] = properties
         cards[card_id]['name'] = attributes['name']
         cards[card_id]['id'] = attributes['id']

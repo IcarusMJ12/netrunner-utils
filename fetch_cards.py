@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Fetch cards from netrunnercards.info and store them in a sqlite database.
+Fetch cards from netrunnercards.info and store them in a json dump.
 """
 
 from json import load as json_load
@@ -83,7 +83,7 @@ def main():
     for path in walk(card_sets_path):
         if len(path[-1]) > 0 and path[-1][0] == 'set.xml' and not path[0].endswith('Markers'):
             set_data = octgnSetToDict(join(card_sets_path, path[0], path[-1][0]))
-            for card_id, card in set_data['cards'].items():
+            for card in set_data['cards'].values():
                 card['set_id'] = set_data['id']
                 card['game_id'] = set_data['gameid']
             card_octgn_data.update(set_data['cards'])
@@ -95,7 +95,7 @@ def main():
         try:
             octgn_card = card_octgn_data[card['card_id']]
         except KeyError as e:
-            print '', card['set_name']
+            print 'EE', card['card_id'], card['set_name']
             continue
         card['set_id'] = octgn_card['set_id']
         card['game_id'] = octgn_card['game_id']

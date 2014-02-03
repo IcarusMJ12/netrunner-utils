@@ -3,7 +3,7 @@ class @SettingsManager
         @sets = $.uniq([card.setcode, card.set_name, card.set_id, card.card_id] for k, card of window.cards,
             false, (a) -> a[0])
         # filter out promo/game kit cards
-        @sets = $.filter(@sets, (n) -> n[0] isnt "promos")
+        @sets = $.filter(@sets, (n) -> n[0] isnt "special")
         # filter out cards we don't have the OCTGN set id, for now
         @sets = $.filter(@sets, (n) -> n[2]?)
         @sets = $.sortBy(@sets, (n) -> n[3])
