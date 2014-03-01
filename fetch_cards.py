@@ -18,7 +18,7 @@ from git.repo import Repo
 from card_set import octgnSetToDict
 
 NETRUNNERCARDS_BASE = 'http://netrunnerdb.com'
-NETRUNNERCARDS_URL = 'http://netrunnerdb.com/api/search/d:r|c'
+NETRUNNERCARDS_URL = NETRUNNERCARDS_BASE + '/api/cards'
 
 _keyname_transform_map = {
         "code": "card_id",
